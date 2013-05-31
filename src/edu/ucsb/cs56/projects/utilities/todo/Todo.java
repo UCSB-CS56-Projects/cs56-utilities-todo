@@ -16,6 +16,25 @@ public class Todo implements Serializable {
 		boolean end = true;
 		TodoList taskList = new TodoList();
 
+		try
+		{
+			ObjectInputStream iStream = 
+			new ObjectInputStream(
+				new FileInputStream("todo.ser"));
+			taskList = (TodoList) iStream.readObject();
+		}
+		catch(IOException e)
+		{
+			if (e.getMessage().equals(e.getMessage()))
+				;
+			else
+				System.err.println("Caught IOException: " + e.getMessage());
+		}
+		catch(ClassNotFoundException e)
+		{
+			System.err.println("Caught ClassNotFoundException: " + e.getMessage());
+		}
+
 		while (end)
 		{
 			taskList.printTasks();
@@ -31,10 +50,30 @@ public class Todo implements Serializable {
 			else if (input.equals("mark"))
 				taskList.markTasks();
 			else if (input.equals("exit"))
-				;//TODO
+			{
+				System.out.println("Would you like to save?");
+				String response = scanner.nextLine();
+
+				if (response.equals("yes") || response.equals("Yes"))
+				{
+					try
+					{
+						ObjectOutputStream oStream = new
+							ObjectOutputStream(
+								new FileOutputStream("todo.ser"));
+						oStream.writeObject(taskList);
+						oStream.close();
+					}
+					catch(IOException e)
+					{
+						System.err.println("Caught IOException: " + e.getMessage());
+					}
+				}
+				System.out.println("Good bye!");
+				end = false;
+			}
 			else
 				System.out.println("Not a valid input :(");	
-
 		}
 
 	}
