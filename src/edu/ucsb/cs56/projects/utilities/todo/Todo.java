@@ -24,20 +24,25 @@ public class Todo{
 
 		while(end)
 		{
+			System.out.println("--------TODO--------");
+			for (int i = 0; i < numTasks; i++)
+				System.out.println(tasks.get(i).toString());
+
 			//Print the tasks
 			System.out.println("--------------------");
 
 			Scanner scanner = new Scanner(System.in);
-			System.out.println("add/delete/mark");
+			System.out.println("add, delete, or mark a task");
 			String input = scanner.nextLine();
 
 			if (input.equals("add"))
 			{
+
 				System.out.println("What's the name of the task?");
 				String taskName = scanner.nextLine();
 				System.out.println("What's its due date?");
 				String date = scanner.nextLine();
-				//check and see if date is formmatted correctly
+				//TODO: check and see if date is formmatted correctly
 				System.out.println("At what time?");
 				String time = scanner.nextLine();
 
@@ -49,25 +54,28 @@ public class Todo{
 				String timeDelims = "[ ]";
 				String[] timeTokens = time.split(timeDelims);
 
-				int month = Integer.parseInt(dateTokens[0]);
+				int month = Integer.parseInt(dateTokens[0]) -1;
 				int day   = Integer.parseInt(dateTokens[1]);
-				int year  = Integer.parseInt(dateTokens[2]) + 1900;
+				int year  = Integer.parseInt(dateTokens[2]) + 2000;
 				int hour  = Integer.parseInt(timeTokens[0]);
 				int min   = Integer.parseInt(timeTokens[1]);
+				//TODO: Proposed method ends here
 
 				Task newTask = new Task(taskName, year, month, day, hour, min);
 
 				tasks.add(numTasks, newTask);
 				numTasks++;
 				
-				//Check to see if time is formatted correctly
-				//Add task
 			}
 			else if (input.equals("delete"))
 			{
 
 			}
 			else if (input.equals("mark"))
+			{
+
+			}
+			else if (input.equals("exit"))
 			{
 
 			}
