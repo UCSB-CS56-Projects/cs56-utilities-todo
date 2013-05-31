@@ -3,11 +3,11 @@
   <!-- build.xml for todo
        Note: for this lab, you should not need to edit this file -->
 
-   <property name="projectPackage" value="edu.ucsb.cs56.projects.games.todo" />
+   <property name="projectPackage" value="edu.ucsb.cs56.projects.utilties.todo" />
    <property environment="env"/> <!-- load the environment variables --> 
    <property name="webRoot" value="${env.HOME}/public_html/cs56" />
    <property name="webBaseURL" value="http://www.cs.ucsb.edu/~${env.USER}/cs56" />
-   <property name="projectName" value="todo" /> 
+   <property name="projectName" value="Todo" /> 
    <property name="javadocDest" value="${webRoot}/${projectName}/javadoc" /> 
    <property name="javadocURL" value="${webBaseURL}/${projectName}/javadoc" /> 
    <property name="javadocLink" value="http://java.sun.com/javase/7/docs/api/" />
@@ -24,6 +24,10 @@
     </javac>
   </target>
 
+  <target name="clean" description="delete unnecessary files and directories">
+    <delete dir="build" quiet="true" />  
+    <delete dir="javadoc" quiet="true" />
+  </target> 
 
  <target name="javadoc" depends="compile" description="publish javadoc"> 
    <delete dir="javadoc" quiet="true" /> 
@@ -53,7 +57,7 @@
  </target>        
 
   <target name="run" depends="compile" description="run the todo application">
-    <java fork="true" classpathref="project.class.path" classname="${projectPackage}.todo" />
+    <java fork="true" classpathref="project.class.path" classname="${projectPackage}.Todo" />
   </target>
 
 
