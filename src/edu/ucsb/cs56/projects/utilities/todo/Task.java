@@ -17,8 +17,8 @@ public class Task implements Serializable{
 	private String taskName;
 	private Calendar dueDate;
 	private boolean completed;
-	//private int numSubtasks;
-	//private ArrayList<Task> subTasks;
+	private int numSubtasks;
+	private ArrayList<Task> subtasks = new ArrayList<Task>();
 
 	/**
 	Constructor for a single task
@@ -34,6 +34,11 @@ public class Task implements Serializable{
 		this.taskName = taskName;
 		this.dueDate = new GregorianCalendar(year, month, day, hour, min);
 		this.completed = false;
+		this.numSubtasks = 0;
+	}
+
+	public Task()
+	{
 	}
 
 	/**
@@ -53,12 +58,22 @@ public class Task implements Serializable{
 		return date_format.format(this.dueDate.getTime());
 	}
 
+	public int getNumSubtasks()
+	{
+		return this.numSubtasks;
+	}
+
 	/**
 	Marks a task as completed
 	*/
 	public void markCompleted()
 	{
 		this.completed = true;
+	}
+
+	public ArrayList<Task> getSubTasks()
+	{
+		return this.subtasks;
 	}
 
 	/**
@@ -68,6 +83,12 @@ public class Task implements Serializable{
 	{
 		return this.completed;
 	}
+
+	public ArrayList<Task> getSubTasksList()
+	{
+		return subtasks;
+	}
+
 
 	/**
 	Overwriting the toString method. Prints in the format of:

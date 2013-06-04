@@ -37,7 +37,12 @@ public class Todo implements Serializable {
 
 		while (end)
 		{
-			taskList.printTasks();
+			System.out.println("");
+			System.out.println("--------TODO--------");
+
+			taskList.printTasks(taskList.getTasks(),0);
+
+			System.out.println("--------------------");
 
 			Scanner scanner = new Scanner(System.in);
 			System.out.println("add, delete, or mark a task, or exit.");

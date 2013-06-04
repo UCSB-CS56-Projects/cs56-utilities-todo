@@ -27,18 +27,29 @@ public class TodoList implements Serializable {
 		return this.numTasks;
 	}
 
+	public ArrayList<Task> getTasks()
+	{
+		return this.tasks;
+	}
+
 	/**
 	Method that prints out a few lines of code to make a "pretty" interface on the command line
 	*/
-	public void printTasks()
+	public void printTasks(ArrayList<Task> tasklist, int heriarchyNum)
 	{
-		System.out.println("");
-		System.out.println("--------TODO--------");
-		for (int i = 0; i < this.numTasks; i++)
-			System.out.println(this.tasks.get(i).toString());
+		for (int i = 0; i < tasklist.size() ; i++)
+		{
+			String returnString = "";
+			for(int j = 0; j < heriarchyNum; j++)
+			{
+				returnString = returnString +"   ";
+			}
 
-		//Print the tasks
-		System.out.println("--------------------");
+			returnString = returnString + tasklist.get(i).toString();
+			System.out.println(returnString);
+			if (tasklist.get(i).getSubTasksList() != null)
+				printTasks(tasklist.get(i).getSubTasksList(), heriarchyNum+1);
+		}
 	}
 	/**
 	Method that instigates dialog asking for input of a task, and due date from the user
@@ -55,12 +66,15 @@ public class TodoList implements Serializable {
 		System.out.println("At what time?");
 		String time = scanner.nextLine();
 
-		//TODO: Create a method that takes in the date and time, splits, and turns into date Array
-		//TODO: Proposed method begins here
+		//PARING AND ASSIGNING NAME AND DATE VALUES
+		//BEGINS
+		String nameDelims = "[/]";
+		String[] nameTokens = taskName.split(nameDelims);
+
 		String dateDelims = "[/]";
 		String[] dateTokens = date.split(dateDelims);
 		
-		String timeDelims = "[ ]";
+		String timeDelims = "[:]";
 		String[] timeTokens = time.split(timeDelims);
 
 		int month = Integer.parseInt(dateTokens[0]) -1;
@@ -68,12 +82,31 @@ public class TodoList implements Serializable {
 		int year  = Integer.parseInt(dateTokens[2]) + 2000;
 		int hour  = Integer.parseInt(timeTokens[0]);
 		int min   = Integer.parseInt(timeTokens[1]);
-		//TODO: Proposed method ends here
+
+		if (nameTokens.length == 1)
+			taskName = taskName;
+		else
+			taskName = nameTokens[nameTokens.length -1];
+		//ENDS
+
 
 		Task newTask = new Task(taskName, year, month, day, hour, min);
 
-		this.tasks.add(this.numTasks, newTask);
-		this.numTasks++;
+
+		if (nameTokens.length > 1)
+		{
+			Task parentTask = this.search(nameTokens[nameTokens.length-2]);
+
+			if (parentTask != null)
+				parentTask.getSubTasksList().add(parentTask.getSubTasksList().size(), newTask);
+			else
+				System.out.println("Not a valid parent task!");
+		}
+		else
+		{
+			this.tasks.add(this.numTasks, newTask);
+			this.numTasks++;
+		}
 
 	}
 	/**
@@ -134,6 +167,40 @@ public class TodoList implements Serializable {
 			else
 				System.out.println("Silly you. That's not a real task!");
 		}
+	}
+
+	public Task find(String parentTaskName, Task desTask)
+	{
+		Task returnTask;
+
+		if (desTask.getName().equals(parentTaskName))
+			return desTask;
+		else
+		{	
+			for (int i = 0; i < desTask.getSubTasksList().size(); i++)
+			{
+				returnTask = find(parentTaskName, desTask.getSubTasksList().get(i));
+				if (returnTask != null)
+					return returnTask;
+			}
+		}
+		return null;
+	}
+
+	public Task search(String parentTaskName)
+	{
+		Task parentTask = new Task();
+
+		for(int i = 0; i < this.tasks.size(); i++)
+		{
+			parentTask = this.find(parentTaskName, this.tasks.get(i));
+
+			if (parentTask != null)
+				break;
+		}
+
+		return parentTask;
+
 	}
 
 }
