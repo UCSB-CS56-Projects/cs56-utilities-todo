@@ -19,6 +19,7 @@ public class Task implements Serializable{
 	private boolean completed;
 	private int numSubtasks;
 	private ArrayList<Task> subtasks = new ArrayList<Task>();
+	private Task parentTask;
 
 	/**
 	Constructor for a single task
@@ -29,17 +30,16 @@ public class Task implements Serializable{
 	@parem hour the hour in which the due date is
 	@parem min the minute at which the due date is
 	*/
-	public Task(String taskName, int year, int month, int day, int hour, int min)
+	public Task(String taskName, int year, int month, int day, int hour, int min, Task parentTask)
 	{
 		this.taskName = taskName;
 		this.dueDate = new GregorianCalendar(year, month, day, hour, min);
 		this.completed = false;
 		this.numSubtasks = 0;
+		this.parentTask = parentTask;
 	}
 
-	public Task()
-	{
-	}
+	public Task() {}
 
 	/**
 	Returns the name of the task
@@ -61,6 +61,11 @@ public class Task implements Serializable{
 	public int getNumSubtasks()
 	{
 		return this.numSubtasks;
+	}
+
+	public Task getParentTask()
+	{
+		return this.parentTask;
 	}
 
 	/**

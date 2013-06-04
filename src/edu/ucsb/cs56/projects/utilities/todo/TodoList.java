@@ -17,15 +17,10 @@ import java.io.*;
 public class TodoList implements Serializable {
 
 	private ArrayList<Task> tasks = new ArrayList<Task>();
-	private int numTasks = 0;
 
     /**
 	Getter for the number of task in a list
 	*/
-	public int getNumTasks()
-	{
-		return this.numTasks;
-	}
 
 	public ArrayList<Task> getTasks()
 	{
@@ -40,17 +35,19 @@ public class TodoList implements Serializable {
 		for (int i = 0; i < tasklist.size() ; i++)
 		{
 			String returnString = "";
+
 			for(int j = 0; j < heriarchyNum; j++)
-			{
 				returnString = returnString +"   ";
-			}
 
 			returnString = returnString + tasklist.get(i).toString();
+
 			System.out.println(returnString);
+
 			if (tasklist.get(i).getSubTasksList() != null)
 				printTasks(tasklist.get(i).getSubTasksList(), heriarchyNum+1);
 		}
 	}
+
 	/**
 	Method that instigates dialog asking for input of a task, and due date from the user
 	It then creates a new Task, and puts that in the ArrayList
@@ -89,26 +86,26 @@ public class TodoList implements Serializable {
 			taskName = nameTokens[nameTokens.length -1];
 		//ENDS
 
-
-		Task newTask = new Task(taskName, year, month, day, hour, min);
-
-
 		if (nameTokens.length > 1)
 		{
 			Task parentTask = this.search(nameTokens[nameTokens.length-2]);
 
 			if (parentTask != null)
+			{
+				Task newTask = new Task(taskName, year, month, day, hour, min, parentTask);
 				parentTask.getSubTasksList().add(parentTask.getSubTasksList().size(), newTask);
+			}
 			else
 				System.out.println("Not a valid parent task!");
 		}
 		else
 		{
-			this.tasks.add(this.numTasks, newTask);
-			this.numTasks++;
+			Task newTask = new Task(taskName, year, month, day, hour, min, null);
+			this.tasks.add(newTask);
 		}
 
 	}
+
 	/**
 	Method that instigates dialog asking for input to delete a task
 	*/
@@ -118,24 +115,20 @@ public class TodoList implements Serializable {
 		System.out.println("What's the task would you like to delete?");
 		String taskName = scanner.nextLine();
 
-		int deleteIndex = -1;
+		Task findTask = this.search(taskName);
 
-		for (int i = 0; i < this.numTasks; i++)
+		if (findTask != null && findTask.getParentTask() != null)
 		{
-			if (this.tasks.get(i).getName().equals(taskName))
-			{
-				deleteIndex = i;
-				break;
-			}
+			Task parentTask = findTask.getParentTask();
+			parentTask.getSubTasksList().remove(findTask);
 		}
-
-		if (deleteIndex != -1)
+		else if (findTask != null)
 		{
-			this.tasks.remove(deleteIndex);
-			this.numTasks--;
+			this.tasks.remove(findTask);
 		}
 		else
-			System.out.println("Aww shucks. Not a valid task name.");
+			System.out.println("Not a valid task name");
+
 	}
 
 	/**
@@ -147,26 +140,18 @@ public class TodoList implements Serializable {
 		System.out.println("What's the task would you like to mark completed?");
 		String taskName = scanner.nextLine();
 
-		int markIndex = -1;
+		Task findTask = this.search(taskName);
 
-		for (int i = 0; i < this.numTasks; i++)
+		if (findTask != null)
 		{
-			if (this.tasks.get(i).getName().equals(taskName))
-			{
-				markIndex = i;
-				break;
-			}
-		}
-
-		if (markIndex != -1)
-		{
-			if (this.tasks.get(markIndex).getCompleted() == false)
-				this.tasks.get(markIndex).markCompleted();
-			else if (this.tasks.get(markIndex).getCompleted() == true)
-				System.out.println("Task already marked completed");
+			if (findTask.getCompleted() == false)
+				findTask.markCompleted();
 			else
-				System.out.println("Silly you. That's not a real task!");
+				System.out.println("Task already marked completed");
 		}
+		else
+			System.out.println("Silly you. That's not a real task!");
+
 	}
 
 	public Task find(String parentTaskName, Task desTask)
