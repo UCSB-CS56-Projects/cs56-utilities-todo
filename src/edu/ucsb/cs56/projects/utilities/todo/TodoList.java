@@ -3,13 +3,14 @@ package edu.ucsb.cs56.projects.utilties.todo;
 import edu.ucsb.cs56.projects.utilties.todo.Task;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Comparator;
 import java.text.SimpleDateFormat;
 import java.util.GregorianCalendar;
 import java.util.Scanner;
 import java.io.*;
 
 /**
-	A represention of a list of Tasks. Does this by having an Arraylist be private
+	A represention of a list of Tasks. Does this by having an Arraylist as a private variable.
 
 	@author Brandon Newman
 	@version todo project for CS56 S13
@@ -17,6 +18,7 @@ import java.io.*;
 public class TodoList implements Serializable {
 
 	private ArrayList<Task> tasks = new ArrayList<Task>();
+	private ArrayList<Task> sortedTasks = new ArrayList<Task>();
 
     /**
 	Getter for the number of task in a list
@@ -27,25 +29,9 @@ public class TodoList implements Serializable {
 		return this.tasks;
 	}
 
-	/**
-	Method that prints out a few lines of code to make a "pretty" interface on the command line
-	*/
-	public void printTasks(ArrayList<Task> tasklist, int heriarchyNum)
+	public ArrayList<Task> getSortedTasks()
 	{
-		for (int i = 0; i < tasklist.size() ; i++)
-		{
-			String returnString = "";
-
-			for(int j = 0; j < heriarchyNum; j++)
-				returnString = returnString +"   ";
-
-			returnString = returnString + tasklist.get(i).toString();
-
-			System.out.println(returnString);
-
-			if (tasklist.get(i).getSubTasksList() != null)
-				printTasks(tasklist.get(i).getSubTasksList(), heriarchyNum+1);
-		}
+		return this.sortedTasks;
 	}
 
 	/**
@@ -154,7 +140,7 @@ public class TodoList implements Serializable {
 
 	}
 
-	public Task find(String parentTaskName, Task desTask)
+	public Task findInOneComponent(String parentTaskName, Task desTask)
 	{
 		Task returnTask;
 
@@ -164,7 +150,7 @@ public class TodoList implements Serializable {
 		{	
 			for (int i = 0; i < desTask.getSubTasksList().size(); i++)
 			{
-				returnTask = find(parentTaskName, desTask.getSubTasksList().get(i));
+				returnTask = findInOneComponent(parentTaskName, desTask.getSubTasksList().get(i));
 				if (returnTask != null)
 					return returnTask;
 			}
@@ -178,14 +164,126 @@ public class TodoList implements Serializable {
 
 		for(int i = 0; i < this.tasks.size(); i++)
 		{
-			parentTask = this.find(parentTaskName, this.tasks.get(i));
+			parentTask = this.findInOneComponent(parentTaskName, this.tasks.get(i));
 
 			if (parentTask != null)
 				break;
 		}
 
 		return parentTask;
+	}
 
+	/**
+	Method that prints out a few lines of code to make a "pretty" interface on the command line
+	*/
+	public void printTasks(ArrayList<Task> tasklist, int heriarchyNum)
+	{
+		for (int i = 0; i < tasklist.size() ; i++)
+		{
+			String returnString = "";
+
+			for(int j = 0; j < heriarchyNum; j++)
+				returnString = returnString +"   ";
+
+			returnString = returnString + tasklist.get(i).toString();
+
+			System.out.println(returnString);
+
+			if (tasklist.get(i).getSubTasksList() != null)
+				printTasks(tasklist.get(i).getSubTasksList(), heriarchyNum+1);
+		}
+	}
+
+	/**
+	Uncompleted tasks are printed out in list form. I'd always envisioned this as a single list,
+	but might add nested support, as it should be an easy fix
+	*/
+	public void printByCompletion(ArrayList<Task> tasklist)
+	{
+		for (int i = 0; i < tasklist.size() ; i++)
+		{
+			if (tasklist.get(i).getCompleted() == false)
+			{
+				String returnString = tasklist.get(i).toString();
+				System.out.println(returnString);
+			}
+
+			if (tasklist.get(i).getSubTasksList() != null)
+				printByCompletion(tasklist.get(i).getSubTasksList());
+		}
+	}
+
+	/**
+	Prints the tasks that have a due date of the current day, month and year.
+	*/
+	public void printToday(ArrayList<Task> tasklist, int day, int month, int year)
+	{
+		for (int i = 0; i < tasklist.size() ; i++)
+		{
+			if (tasklist.get(i).getCalendarForm().get(Calendar.DAY_OF_MONTH) == day   && 
+				tasklist.get(i).getCalendarForm().get(Calendar.MONTH) 		 == month &&
+				tasklist.get(i).getCalendarForm().get(Calendar.YEAR)		 == year    )
+			{
+				String returnString = tasklist.get(i).toString();
+				System.out.println(returnString);
+			}
+
+			if (tasklist.get(i).getSubTasksList() != null)
+				printToday(tasklist.get(i).getSubTasksList(), day, month, year);
+		}
+	}
+
+	/**
+	The idea is that TodoList has a list of all tasks but is only updated when the user
+	wants to sort by name or date. The list is first emptied and refilled with this function.
+	*/
+	public void updateSortedList(ArrayList<Task> tasklist, ArrayList<Task> sortedList)
+	{
+		for (int i = 0; i <tasklist.size(); i++)
+		{
+			sortedList.add(tasklist.get(i));
+
+			if (tasklist.get(i).getSubTasksList() != null)
+				updateSortedList(tasklist.get(i).getSubTasksList(), sortedList);
+		}
+	}
+
+	/**
+	A new Comparator that allows two strings to be compared alphabetically
+	*/
+	static Comparator<Task> compareByName()
+	{
+		return new Comparator<Task>()
+		{
+
+			public int compare(Task t1, Task t2)
+			{
+				String taskName1 = t1.getName().toUpperCase();
+				String taskName2 = t2.getName().toUpperCase();
+
+				return taskName1.compareTo(taskName2);
+			}
+
+		};
+	}
+
+    /**
+	A new Comparator that allows two strings to be compared by date
+	*/
+	static Comparator<Task> compareByDate()
+	{
+		return new Comparator<Task>()
+		{
+
+			public int compare(Task t1, Task t2)
+			{
+				Calendar date1 = t1.getCalendarForm();
+				Calendar date2 = t2.getCalendarForm();
+
+				return date1.compareTo(date2);
+			}
+
+		};
 	}
 
 }

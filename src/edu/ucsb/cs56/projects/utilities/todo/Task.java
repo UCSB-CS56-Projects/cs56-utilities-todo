@@ -12,12 +12,11 @@ import java.io.Serializable;
 	@author Brandon Newman
 	@version todo project for CS56 S13
 */
-public class Task implements Serializable{
+public class Task implements Serializable {
 
 	private String taskName;
 	private Calendar dueDate;
 	private boolean completed;
-	private int numSubtasks;
 	private ArrayList<Task> subtasks = new ArrayList<Task>();
 	private Task parentTask;
 
@@ -35,7 +34,6 @@ public class Task implements Serializable{
 		this.taskName = taskName;
 		this.dueDate = new GregorianCalendar(year, month, day, hour, min);
 		this.completed = false;
-		this.numSubtasks = 0;
 		this.parentTask = parentTask;
 	}
 
@@ -58,9 +56,9 @@ public class Task implements Serializable{
 		return date_format.format(this.dueDate.getTime());
 	}
 
-	public int getNumSubtasks()
+	public Calendar getCalendarForm()
 	{
-		return this.numSubtasks;
+		return this.dueDate;
 	}
 
 	public Task getParentTask()
