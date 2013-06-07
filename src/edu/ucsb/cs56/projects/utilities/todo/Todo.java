@@ -5,13 +5,24 @@ import edu.ucsb.cs56.projects.utilties.todo.Todo;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
+import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.GregorianCalendar;
 import java.util.Scanner;
 import java.io.*;
 
+/**
+	Contains the main class. This handles selecting which action to do after tasks are printed, as well as
+	instigating the methods contained in TodoList.
+
+	@author Brandon Newman
+	@version todo project for CS56 S13
+*/
 public class Todo implements Serializable {
 
+	/**
+	The main method
+	*/
 	public static void main(String[] args)
 	{
 		boolean end = true;
@@ -94,6 +105,7 @@ public class Todo implements Serializable {
 				int month = cal.get(Calendar.MONTH);
 				int year  = cal.get(Calendar.YEAR);
 				taskList.printToday(taskList.getTasks(), day, month, year);
+
 			}
 			else if (input.equals("exit"))
 			{

@@ -4,6 +4,7 @@ import edu.ucsb.cs56.projects.utilties.todo.Task;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Comparator;
+import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.GregorianCalendar;
 import java.util.Scanner;
@@ -23,7 +24,6 @@ public class TodoList implements Serializable {
     /**
 	Getter for the number of task in a list
 	*/
-
 	public ArrayList<Task> getTasks()
 	{
 		return this.tasks;
@@ -43,10 +43,10 @@ public class TodoList implements Serializable {
 		Scanner scanner = new Scanner(System.in);
 		System.out.println("What's the name of the task?");
 		String taskName = scanner.nextLine();
-		System.out.println("What's its due date?");
+		System.out.println("What's its due date? (MM/DD/YY)");
 		String date = scanner.nextLine();
 		//TODO: check and see if date is formmatted correctly
-		System.out.println("At what time?");
+		System.out.println("At what time? (HH:MM)");
 		String time = scanner.nextLine();
 
 		//PARING AND ASSIGNING NAME AND DATE VALUES

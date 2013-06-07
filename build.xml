@@ -57,7 +57,9 @@
  </target>        
 
   <target name="run" depends="compile" description="run the todo application">
-    <java fork="true" classpathref="project.class.path" classname="${projectPackage}.Todo" />
+   <echo> To run, type this in the command line:
+    java -cp build edu/ucsb/cs56/projects/utilties/todo/Todo
+   </echo>
   </target>
 
 
