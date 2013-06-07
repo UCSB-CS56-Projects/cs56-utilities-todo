@@ -22,13 +22,16 @@ public class TodoList implements Serializable {
 	private ArrayList<Task> sortedTasks = new ArrayList<Task>();
 
     /**
-	Getter for the number of task in a list
+	Getter for ArrayList of level 1 tasks
 	*/
 	public ArrayList<Task> getTasks()
 	{
 		return this.tasks;
 	}
 
+	/**
+	Getter for the ArrayList of all tasks, sorted
+	*/
 	public ArrayList<Task> getSortedTasks()
 	{
 		return this.sortedTasks;
@@ -140,6 +143,9 @@ public class TodoList implements Serializable {
 
 	}
 
+	/**
+	Method that searches one item in the ArrayList, and all associted subtasks
+	*/
 	public Task findInOneComponent(String parentTaskName, Task desTask)
 	{
 		Task returnTask;
@@ -157,7 +163,11 @@ public class TodoList implements Serializable {
 		}
 		return null;
 	}
+	/**
+	Method that searches all of the tasks asscoiated with a TodoList object. Uses the findInOneComponent method on each level 1 taske
 
+	@see findInOneComponent
+	*/
 	public Task search(String parentTaskName)
 	{
 		Task parentTask = new Task();
