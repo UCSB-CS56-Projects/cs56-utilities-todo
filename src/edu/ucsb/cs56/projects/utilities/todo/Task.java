@@ -12,12 +12,11 @@ import java.io.Serializable;
 	@author Brandon Newman
 	@version todo project for CS56 S13
 */
-public class Task implements Serializable{
+public class Task implements Serializable {
 
 	private String taskName;
 	private Calendar dueDate;
 	private boolean completed;
-	private int numSubtasks;
 	private ArrayList<Task> subtasks = new ArrayList<Task>();
 	private Task parentTask;
 
@@ -35,10 +34,12 @@ public class Task implements Serializable{
 		this.taskName = taskName;
 		this.dueDate = new GregorianCalendar(year, month, day, hour, min);
 		this.completed = false;
-		this.numSubtasks = 0;
 		this.parentTask = parentTask;
 	}
 
+	/**
+	No arg constructor for a single Task
+	*/
 	public Task() {}
 
 	/**
@@ -50,19 +51,24 @@ public class Task implements Serializable{
 	}
 
 	/**
-	Returns the due date in the format of "month/day/year hour:minute" ex. "05/21/13 04:00"
+	Returns the due date as a String in the format of "month/day/year hour:minute" ex. "05/21/13 04:00"
 	*/
 	public String getDueDate()
 	{
 		SimpleDateFormat date_format = new SimpleDateFormat("MM/dd/yyyy HH:mm");
 		return date_format.format(this.dueDate.getTime());
 	}
-
-	public int getNumSubtasks()
+	/**
+	Returns the due date as a Calendar object
+	*/
+	public Calendar getCalendarForm()
 	{
-		return this.numSubtasks;
+		return this.dueDate;
 	}
 
+	/**
+	Returns the parent Task of the current Task
+	*/
 	public Task getParentTask()
 	{
 		return this.parentTask;
@@ -76,11 +82,6 @@ public class Task implements Serializable{
 		this.completed = true;
 	}
 
-	public ArrayList<Task> getSubTasks()
-	{
-		return this.subtasks;
-	}
-
 	/**
 	Returns the completion status of a particular task
 	*/
@@ -89,11 +90,13 @@ public class Task implements Serializable{
 		return this.completed;
 	}
 
+	/**
+	Returns the ArrayList of subtasks for a given task
+	*/
 	public ArrayList<Task> getSubTasksList()
 	{
 		return subtasks;
 	}
-
 
 	/**
 	Overwriting the toString method. Prints in the format of:
