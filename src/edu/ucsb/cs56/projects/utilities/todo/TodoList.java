@@ -45,14 +45,31 @@ public class TodoList implements Serializable {
 	public void addTasks()
 	{
 		Scanner scanner = new Scanner(System.in);
-		System.out.println("What's the name of the task?");
-		String taskName = scanner.nextLine();
-		System.out.println("What's its due date? (MM/DD/YY)");
-		String date = scanner.nextLine();
-		//TODO: check and see if date is formmatted correctly
-		System.out.println("At what time? (HH:MM)");
-		String time = scanner.nextLine();
+		System.out.println("Quick add: y or n?");
+		String quickAdd= scanner.nextLine();
+		String quickInput = "";
+		String taskName;
+		String date;
+		String time;
 
+      		if (quickAdd.equals("y")){
+		    System.out.println("Enter in following format: Taskname MM/DD/YY HH:mm");
+		    quickInput = scanner.nextLine();
+		    String[] taskParts = quickInput.split(" ");
+		    taskName = taskParts[0];
+		    date = taskParts[1];
+		    time = taskParts[2];
+      		}
+    		else{
+		    System.out.println("What's the name of the task?");
+		    taskName = scanner.nextLine();
+		    System.out.println("What's its due date? (MM/DD/YY)");
+		    date = scanner.nextLine();
+		    //TODO: check and see if date is formmatted correctly
+		    System.out.println("At what time? (HH:MM)");
+		    time = scanner.nextLine();
+		}
+		
 		//PARING AND ASSIGNING NAME AND DATE VALUES
 		//BEGINS
 		String nameDelims = "[/]";
