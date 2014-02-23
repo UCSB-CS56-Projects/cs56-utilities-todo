@@ -29,6 +29,10 @@
     <delete dir="javadoc" quiet="true" />
   </target> 
 
+  <target name="cleanSaved" description="delete any saved .ser files">
+    <delete file="todo.ser" />
+  </target>
+
  <target name="javadoc" depends="compile" description="publish javadoc"> 
    <delete dir="javadoc" quiet="true" /> 
    <javadoc  destdir="javadoc" author="true" version="true" use="true" >
