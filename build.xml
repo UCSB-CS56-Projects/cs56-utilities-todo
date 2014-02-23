@@ -30,7 +30,7 @@
   </target> 
 
   <target name="cleanSaved" description="delete any saved .ser files">
-    <delete file="todo.ser" />
+    <delete dir="savedLists" quiet="true" />
   </target>
 
  <target name="javadoc" depends="compile" description="publish javadoc"> 
@@ -61,7 +61,8 @@
 
   <!-- TODO: add attribute fork="true" for gui -->
   <target name="run" depends="compile" description="run the todo application">
-   <java classname="${projectPackage}.Todo" classpath="build" />
+   <mkdir dir= "savedLists" /> 
+   <java classname="${projectPackage}.Todo" classpath="build" /> 
   </target>
 
 

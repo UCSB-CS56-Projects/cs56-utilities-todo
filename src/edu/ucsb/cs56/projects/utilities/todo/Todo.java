@@ -32,7 +32,7 @@ public class Todo implements Serializable {
 		{
 			ObjectInputStream iStream = 
 			new ObjectInputStream(
-				new FileInputStream("todo.ser"));
+				new FileInputStream("savedLists/todo.ser"));
 			taskList = (TodoList) iStream.readObject();
 		}
 		catch(IOException e)
@@ -118,7 +118,7 @@ public class Todo implements Serializable {
 					{
 						ObjectOutputStream oStream = new
 							ObjectOutputStream(
-								new FileOutputStream("todo.ser"));
+								new FileOutputStream("savedLists/todo.ser"));
 						oStream.writeObject(taskList);
 						oStream.close();
 					}
