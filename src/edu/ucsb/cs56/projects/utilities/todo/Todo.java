@@ -111,7 +111,7 @@ public class Todo implements Serializable {
 			{
 				System.out.println("Would you like to save?");
 				String response = scanner.nextLine();
-
+				File f;
 				if (response.equals("yes") || response.equals("Yes"))
 				{
 					try
@@ -126,6 +126,10 @@ public class Todo implements Serializable {
 					{
 						System.err.println("Caught IOException: " + e.getMessage());
 					}
+					System.out.println("File name:");
+					String filename= "savedLists/" + scanner.nextLine();
+					f = new File(filename); 
+					taskList.printTasksToFile(taskList.getTasks(),0,f);	
 				}
 				System.out.println("Good bye!");
 				end = false;

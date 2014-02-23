@@ -203,6 +203,23 @@ public class TodoList implements Serializable {
 				printTasks(tasklist.get(i).getSubTasksList(), heriarchyNum+1);
 		}
 	}
+        
+    /**
+       Method that prints the list of tasks onto a text file
+    */
+    public void printTasksToFile(ArrayList<Task> tasklist, int hierarchyNum, File f)
+        {
+	    
+	    try{
+		FileWriter writer= new FileWriter(f);
+		for (Task t: tasklist){
+		    writer.write(t.toString() + "\n");
+		}
+		writer.close();
+	    } catch(IOException ex) {
+		ex.printStackTrace();
+	    }
+	}
 
 	/**
 	Uncompleted tasks are printed out in list form. I'd always envisioned this as a single list,
