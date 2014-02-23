@@ -65,17 +65,32 @@ public class Todo implements Serializable {
 		    }
 		}
 
+		boolean printSorted = false;
+		boolean byCompletion = false;
 		while (end)
 		{
 			System.out.println("");
 			System.out.println("--------TODO--------");
-
-			taskList.printTasks(taskList.getTasks(),0);
+			
+			if(printSorted) {
+			    if (byCompletion) {
+				taskList.printByCompletion(taskList.getTasks());
+			    }
+			    else {
+				for (int i = 0; i < taskList.getSortedTasks().size(); i++) {
+				    System.out.println(taskList.getSortedTasks().get(i).toString());
+				}
+			    }
+			}
+			else {
+			    taskList.printTasks(taskList.getTasks(),0);
+			}
 
 			System.out.println("--------------------");
 
-			//Scanner scanner = new Scanner(System.in);
-			System.out.println("add, delete, or mark a task, or exit.");
+		        printSorted = false;
+			byCompletion = false;
+			System.out.println("add, delete, or mark a task, sort, or exit.");
 			String input = scanner.nextLine();
 
 			if (input.equals("add"))
@@ -84,36 +99,42 @@ public class Todo implements Serializable {
 				taskList.deleteTasks();
 			else if (input.equals("mark"))
 				taskList.markTasks();
-			else if (input.equals("sort by completion"))
-			{
-				System.out.println("");
-				taskList.printByCompletion(taskList.getTasks());
-			}
-			else if (input.equals("sort by name"))
-			{
-				taskList.getSortedTasks().clear();
-				taskList.updateSortedList(taskList.getTasks(), taskList.getSortedTasks());
-				Collections.sort(taskList.getSortedTasks(), taskList.compareByName());
+			else if (input.equals("sort")) {
+			        printSorted = true;
+			        System.out.println("Sort by name, date, or completion?");
+			        input = scanner.nextLine();
+			        if (input.equals("completion"))
+				    {
+					byCompletion = true;
+					//	System.out.println("");
+					//	taskList.printByCompletion(taskList.getTasks());
+				    }
+				else if (input.equals("name"))
+				    {
+					taskList.getSortedTasks().clear();
+					taskList.updateSortedList(taskList.getTasks(), taskList.getSortedTasks());
+					Collections.sort(taskList.getSortedTasks(), taskList.compareByName());
 
-				System.out.println("");
-				for (int i = 0; i < taskList.getSortedTasks().size(); i++)
-				{
-					System.out.println(taskList.getSortedTasks().get(i).toString());
-				}
+					//	System.out.println("");
+					//	for (int i = 0; i < taskList.getSortedTasks().size(); i++)
+					//	    {
+					//		System.out.println(taskList.getSortedTasks().get(i).toString());
+					//	    }
+					
+				    }
+				else if (input.equals("date"))
+				    {
+					taskList.getSortedTasks().clear();
+					taskList.updateSortedList(taskList.getTasks(), taskList.getSortedTasks());
+					Collections.sort(taskList.getSortedTasks(), taskList.compareByDate());
 
-			}
-			else if (input.equals("sort by date"))
-			{
-				taskList.getSortedTasks().clear();
-				taskList.updateSortedList(taskList.getTasks(), taskList.getSortedTasks());
-				Collections.sort(taskList.getSortedTasks(), taskList.compareByDate());
+					//	System.out.println("");
+					//	for (int i = 0; i < taskList.getSortedTasks().size(); i++)
+					//   {
+					//	System.out.println(taskList.getSortedTasks().get(i).toString());
+					//    }
 
-				System.out.println("");
-				for (int i = 0; i < taskList.getSortedTasks().size(); i++)
-				{
-					System.out.println(taskList.getSortedTasks().get(i).toString());
-				}
-
+				    }
 			}
 			else if(input.equals("today"))
 			{
