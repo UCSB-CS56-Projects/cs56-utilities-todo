@@ -27,24 +27,42 @@ public class Todo implements Serializable {
 	{
 		boolean end = true;
 		TodoList taskList = new TodoList();
-
-		try
-		{
+		Scanner scanner = new Scanner(System.in);  
+		System.out.println("Would you like to load a todo list from a file? (yes or no)");
+		String yesOrNo = scanner.nextLine();
+		if (yesOrNo.equals("yes")){
+		    System.out.println("Filename (from savedLists folder):");
+		    String inputFile = "savedLists/"+ scanner.nextLine();
+		    try{
+			//System.out.println("Filename (from savedLists folder):");
+			//String inputFile = "savedLists/"+ scanner.nextLine();
+			taskList.readFile(new File(inputFile));
+					    } 
+		    //this catch not working// 
+		    catch (Exception ex)
+			{
+			    System.err.println("Caught FileNotFoundException:" + ex.getMessage());
+			}
+		}
+		else{
+		    try
+		    {
 			ObjectInputStream iStream = 
 			new ObjectInputStream(
 				new FileInputStream("savedLists/todo.ser"));
 			taskList = (TodoList) iStream.readObject();
-		}
+		    }
 		catch(IOException e)
-		{
+		    {
 			if (e.getMessage().equals(e.getMessage()))
-				;
+			    ;
 			else
-				System.err.println("Caught IOException: " + e.getMessage());
-		}
-		catch(ClassNotFoundException e)
-		{
+			    System.err.println("Caught IOException: " + e.getMessage());
+		    }
+	        catch(ClassNotFoundException e)
+		    {
 			System.err.println("Caught ClassNotFoundException: " + e.getMessage());
+		    }
 		}
 
 		while (end)
@@ -56,7 +74,7 @@ public class Todo implements Serializable {
 
 			System.out.println("--------------------");
 
-			Scanner scanner = new Scanner(System.in);
+			//Scanner scanner = new Scanner(System.in);
 			System.out.println("add, delete, or mark a task, or exit.");
 			String input = scanner.nextLine();
 

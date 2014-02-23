@@ -259,7 +259,49 @@ public class TodoList implements Serializable {
 				printToday(tasklist.get(i).getSubTasksList(), day, month, year);
 		}
 	}
+    
+    /**
+    Reads a todo list from a text file.
+    */
+    public ArrayList<Task> readFile(File f){
+	try{
+	    FileReader fileReader = new FileReader(f);
+	    BufferedReader reader = new BufferedReader(fileReader);
+	    String line= null;
+	    Task parentTask = new Task();
+	    while ((line=reader.readLine()) !=null) {
+		String[] bracketSplit = line.split("]");
+		String complete = bracketSplit[0];
+      
+		String[] spaceSplit = bracketSplit[1].split(" ");
+		
+	 
+		String name = spaceSplit[1];
+		String fullDate = spaceSplit[2];
+		String time = spaceSplit[3];
 
+		String[] slashSplit = fullDate.split("/");
+		String[] colonSplit = time.split(":");
+	     
+		int month = Integer.parseInt(slashSplit[0]);
+		int day   = Integer.parseInt(slashSplit[1]);
+		int year  = Integer.parseInt(slashSplit[2]);
+
+		int hour  = Integer.parseInt(colonSplit[0]);
+		int min   = Integer.parseInt(colonSplit[1]);
+
+		Task task = new Task(name, year, month, day, hour, min, parentTask);
+
+	     	if (complete.contains("x")){task.markCompleted();}
+		tasks.add(task);		
+	    }
+	    reader.close();
+	}catch(Exception ex) {
+	    ex.printStackTrace();
+	}
+	return tasks;
+    }
+		
 	/**
 	The idea is that TodoList has a list of all tasks but is only updated when the user
 	wants to sort by name or date. The list is first emptied and refilled with this function.
