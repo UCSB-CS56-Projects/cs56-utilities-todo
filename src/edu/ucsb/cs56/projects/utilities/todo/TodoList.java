@@ -48,22 +48,37 @@ public class TodoList implements Serializable {
 		System.out.println("Quick add: y or n?");
 		String quickAdd= scanner.nextLine();
 		String quickInput = "";
-		String taskName;
-		String date;
-		String time;
-		int hour;
-		int min;
-		int month;
-		int day;
-		int year;
+		String taskName = "";
+		String date = "";
+		String time = "";
+		int hour = -1;
+		int min = -1;
+		int month = -1;
+		int day = -1;
+		int year = -1;
 
       		if (quickAdd.equals("y")){
 		    System.out.println("Enter in following format: Taskname MM/DD/YY HH:mm");
 		    quickInput = scanner.nextLine();
 		    String[] taskParts = quickInput.split(" ");
-		    taskName = taskParts[0];
-		    date = taskParts[1];
-		    time = taskParts[2];
+		    if (taskParts.length > 2) {
+			taskName = taskParts[0];
+			date = taskParts[1];
+			time = taskParts[2];
+		    }
+		    else if (taskParts.length > 1) {
+			if (taskParts[1].contains("/")) {
+			    taskName = taskParts[0];
+			    date = taskParts[1];
+			}
+			else if (taskParts[1].contains(":")) {
+			    taskName = taskParts[0];
+			    time = taskParts[1];
+			}
+		    }
+		    else {
+			taskName = taskParts[0];
+		    }
       		}
     		else{
 		    System.out.println("What's the name of the task?");
@@ -91,9 +106,6 @@ public class TodoList implements Serializable {
 		    min = -1;
 		}
 		else{
-		    //int month = Integer.parseInt(dateTokens[0]) -1;
-		    //int day   = Integer.parseInt(dateTokens[1]);
-		    //int year  = Integer.parseInt(dateTokens[2]) + 2000;
 		    hour  = Integer.parseInt(timeTokens[0]);
 		    min   = Integer.parseInt(timeTokens[1]);
 		}
