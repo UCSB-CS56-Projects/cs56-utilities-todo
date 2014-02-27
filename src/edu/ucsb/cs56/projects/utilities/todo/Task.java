@@ -32,11 +32,49 @@ public class Task implements Serializable {
 	public Task(String taskName, int year, int month, int day, int hour, int min, Task parentTask)
 	{
 		this.taskName = taskName;
-		this.dueDate = new GregorianCalendar(year, month, day, hour, min);
+		//if no date and time
+		if (day == -1 && hour == -1)
+		this.dueDate = null;
+
+		//if no date//
+		else if (day == -1){
+		    this.dueDate = new GregorianCalendar(Calendar.getInstance().get(Calendar.YEAR), Calendar.getInstance().get(Calendar.MONTH), 
+							 Calendar.getInstance().get(Calendar.DATE), hour, min);
+					 
+		}    
+		//if no time
+		else if (hour == -1)
+		    this.dueDate = new GregorianCalendar(year, month, day);
+		    
+		//default
+		else
+		    {this.dueDate = new GregorianCalendar(year, month, day, hour, min);}
 		this.completed = false;
 		this.parentTask = parentTask;
 	}
 
+    /**
+       constructor for no time entered
+    */
+    //    public Task(String taskName, int year, int month, int day, Task parentTask)
+    // {
+    //	this.taskName = taskName;
+    //	this.dueDate = new GregorianCalendar(year, month, day);
+    //	this.completed = false;
+    //	this.parentTask = parentTask;
+    // }
+
+    /**
+       constructor for no date or time entered
+    */
+    //public Task(String taskName, Task parentTask)
+    //{
+    //	this.taskName = taskName;
+    //	this.completed = false;
+    //	this.parentTask = parentTask;
+    //	this.dueDate = null;
+    // }
+	
 	/**
 	No arg constructor for a single Task
 	*/
@@ -107,12 +145,18 @@ public class Task implements Serializable {
 	public String toString()
 	{
 		String result = "";
-
-		if (this.completed == false)
+		if (this.dueDate != null){
+		    if (this.completed == false)
 			result = "[ ] " + this.getName() + " " + this.getDueDate();
-		else
+		    else
 			result = "[x] " + this.getName() + " " + this.getDueDate();
-
+		}
+		else{
+		    if (this.completed == false)
+			result = "[ ]" + " " + this.getName();
+		    else
+			result = "[x]" + " " +  this.getName();
+		}
 		return result;
 	}
 

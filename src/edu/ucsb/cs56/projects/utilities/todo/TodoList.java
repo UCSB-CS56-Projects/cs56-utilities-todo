@@ -51,6 +51,11 @@ public class TodoList implements Serializable {
 		String taskName;
 		String date;
 		String time;
+		int hour;
+		int min;
+		int month;
+		int day;
+		int year;
 
       		if (quickAdd.equals("y")){
 		    System.out.println("Enter in following format: Taskname MM/DD/YY HH:mm");
@@ -70,6 +75,7 @@ public class TodoList implements Serializable {
 		    time = scanner.nextLine();
 		}
 		
+		
 		//PARING AND ASSIGNING NAME AND DATE VALUES
 		//BEGINS
 		String nameDelims = "[/]";
@@ -80,13 +86,27 @@ public class TodoList implements Serializable {
 		
 		String timeDelims = "[:]";
 		String[] timeTokens = time.split(timeDelims);
-
-		int month = Integer.parseInt(dateTokens[0]) -1;
-		int day   = Integer.parseInt(dateTokens[1]);
-		int year  = Integer.parseInt(dateTokens[2]) + 2000;
-		int hour  = Integer.parseInt(timeTokens[0]);
-		int min   = Integer.parseInt(timeTokens[1]);
-
+		if (time.equals("")){
+		    hour = -1;
+		    min = -1;
+		}
+		else{
+		    //int month = Integer.parseInt(dateTokens[0]) -1;
+		    //int day   = Integer.parseInt(dateTokens[1]);
+		    //int year  = Integer.parseInt(dateTokens[2]) + 2000;
+		    hour  = Integer.parseInt(timeTokens[0]);
+		    min   = Integer.parseInt(timeTokens[1]);
+		}
+		if (date.equals("")){
+		    month = -1;
+		    day = -1;
+		    year = -1;
+		}
+		else {
+		    month = Integer.parseInt(dateTokens[0]) -1;                                                                                                        
+                    day   = Integer.parseInt(dateTokens[1]);                                                                                                           
+                    year  = Integer.parseInt(dateTokens[2]) + 2000;      
+		}
 		if (nameTokens.length == 1)
 			taskName = taskName;
 		else
@@ -106,10 +126,10 @@ public class TodoList implements Serializable {
 				System.out.println("Not a valid parent task!");
 		}
 		else
-		{
-			Task newTask = new Task(taskName, year, month, day, hour, min, null);
-			this.tasks.add(newTask);
-		}
+		    {
+			    Task newTask = new Task(taskName, year, month, day, hour, min, null);
+			     this.tasks.add(newTask);
+		    }
 
 	}
 
