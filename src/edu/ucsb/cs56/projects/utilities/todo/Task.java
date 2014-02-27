@@ -52,28 +52,6 @@ public class Task implements Serializable {
 		this.completed = false;
 		this.parentTask = parentTask;
 	}
-
-    /**
-       constructor for no time entered
-    */
-    //    public Task(String taskName, int year, int month, int day, Task parentTask)
-    // {
-    //	this.taskName = taskName;
-    //	this.dueDate = new GregorianCalendar(year, month, day);
-    //	this.completed = false;
-    //	this.parentTask = parentTask;
-    // }
-
-    /**
-       constructor for no date or time entered
-    */
-    //public Task(String taskName, Task parentTask)
-    //{
-    //	this.taskName = taskName;
-    //	this.completed = false;
-    //	this.parentTask = parentTask;
-    //	this.dueDate = null;
-    // }
 	
 	/**
 	No arg constructor for a single Task

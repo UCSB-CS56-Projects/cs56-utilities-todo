@@ -312,22 +312,36 @@ public class TodoList implements Serializable {
 		String complete = bracketSplit[0];
       
 		String[] spaceSplit = bracketSplit[1].split(" ");
-		
-	 
 		String name = spaceSplit[1];
-		String fullDate = spaceSplit[2];
-		String time = spaceSplit[3];
+		String fullDate;
+	        String time;
 
-		String[] slashSplit = fullDate.split("/");
-		String[] colonSplit = time.split(":");
-	     
-		int month = Integer.parseInt(slashSplit[0]);
-		int day   = Integer.parseInt(slashSplit[1]);
-		int year  = Integer.parseInt(slashSplit[2]);
+		String[] slashSplit;
+		String[] colonSplit;
 
-		int hour  = Integer.parseInt(colonSplit[0]);
-		int min   = Integer.parseInt(colonSplit[1]);
+		int month = -1;
+		int day = -1;
+		int year = -1;
 
+		int hour = -1;
+		int min = -1;
+		
+		if (spaceSplit.length > 2) {
+
+		    fullDate = spaceSplit[2];
+		    time = spaceSplit[3];
+
+		    slashSplit = fullDate.split("/");
+		    colonSplit = time.split(":");
+
+		    month = Integer.parseInt(slashSplit[0]);
+		    day   = Integer.parseInt(slashSplit[1]);
+		    year  = Integer.parseInt(slashSplit[2]);
+
+		    hour  = Integer.parseInt(colonSplit[0]);
+		    min   = Integer.parseInt(colonSplit[1]);
+		}
+		
 		Task task = new Task(name, year, month, day, hour, min, parentTask);
 
 	     	if (complete.contains("x")){task.markCompleted();}

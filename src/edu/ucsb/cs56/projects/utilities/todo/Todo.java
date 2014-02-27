@@ -28,7 +28,7 @@ public class Todo implements Serializable {
 		boolean end = true;
 		TodoList taskList = new TodoList();
 		Scanner scanner = new Scanner(System.in);  
-		System.out.println("Would you like to load a todo list from a file? (yes or no)");
+		System.out.println("Would you like to load a todo list from a text file? (yes or no)");
 		String yesOrNo = scanner.nextLine();
 		if (yesOrNo.equals("yes")){
 		    System.out.println("Filename (from savedLists folder):");
