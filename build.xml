@@ -6,7 +6,7 @@
    <property name="projectPackage" value="edu.ucsb.cs56.projects.utilties.todo" />
    <property environment="env"/> <!-- load the environment variables --> 
    <property name="webRoot" value="${env.HOME}/public_html/cs56" />
-   <property name="webBaseURL" value="http://www.cs.ucsb.edu/public_html/cs56" />
+   <property name="webBaseURL" value="http://www.cs.ucsb.edu/~khalid/cs56" />
    <property name="projectName" value="cs56-utilities-todo" /> 
    <property name="javadocDest" value="${webRoot}/${projectName}/javadoc" /> 
    <property name="javadocURL" value="${webBaseURL}/${projectName}/javadoc" /> 
