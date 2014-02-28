@@ -61,24 +61,37 @@ public class TodoList implements Serializable {
 		    System.out.println("Enter in following format: Taskname MM/DD/YY HH:mm");
 		    quickInput = scanner.nextLine();
 		    String[] taskParts = quickInput.split(" ");
-		    if (taskParts.length > 2) {
-			taskName = taskParts[0];
-			date = taskParts[1];
-			time = taskParts[2];
-		    }
-		    else if (taskParts.length > 1) {
-			if (taskParts[1].contains("/")) {
-			    taskName = taskParts[0];
-			    date = taskParts[1];
+
+		    boolean isTaskName = true;
+		    int i = 0;
+		    while (isTaskName) {
+			if (taskParts.length == 0) {
+			    isTaskName = false;
 			}
-			else if (taskParts[1].contains(":")) {
-			    taskName = taskParts[0];
-			    time = taskParts[1];
+			if (taskParts.length - i == 1) {
+			    isTaskName = false;
 			}
+			if (taskParts[i].contains("/") || taskParts[i].contains(":")) {
+			    isTaskName = false;
+			    break;
+			}
+			taskName = taskName + taskParts[i] + " ";
+			i++;
 		    }
-		    else {
-			taskName = taskParts[0];
+		    taskName = taskName.substring(0,taskName.length()-1);
+
+		    System.out.println(taskName);
+		    if (quickInput.contains("/") && quickInput.contains(":")) {
+			date = taskParts[i];
+			time = taskParts[i+1];
 		    }
+		    else if (quickInput.contains("/")) {
+			date = taskParts[i];
+		    }
+		    else if (quickInput.contains(":")) {
+			time = taskParts[i];
+		    }
+		    
       		}
     		else{
 		    System.out.println("What's the name of the task?");

@@ -106,20 +106,12 @@ public class Todo implements Serializable {
 			        if (input.equals("completion"))
 				    {
 					byCompletion = true;
-					//	System.out.println("");
-					//	taskList.printByCompletion(taskList.getTasks());
 				    }
 				else if (input.equals("name"))
 				    {
 					taskList.getSortedTasks().clear();
 					taskList.updateSortedList(taskList.getTasks(), taskList.getSortedTasks());
 					Collections.sort(taskList.getSortedTasks(), taskList.compareByName());
-
-					//	System.out.println("");
-					//	for (int i = 0; i < taskList.getSortedTasks().size(); i++)
-					//	    {
-					//		System.out.println(taskList.getSortedTasks().get(i).toString());
-					//	    }
 					
 				    }
 				else if (input.equals("date"))
@@ -127,12 +119,6 @@ public class Todo implements Serializable {
 					taskList.getSortedTasks().clear();
 					taskList.updateSortedList(taskList.getTasks(), taskList.getSortedTasks());
 					Collections.sort(taskList.getSortedTasks(), taskList.compareByDate());
-
-					//	System.out.println("");
-					//	for (int i = 0; i < taskList.getSortedTasks().size(); i++)
-					//   {
-					//	System.out.println(taskList.getSortedTasks().get(i).toString());
-					//    }
 
 				    }
 			}
