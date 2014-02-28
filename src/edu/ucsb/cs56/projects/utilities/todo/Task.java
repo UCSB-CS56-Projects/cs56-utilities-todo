@@ -71,8 +71,13 @@ public class Task implements Serializable {
 	*/
 	public String getDueDate()
 	{
+	    if (this.dueDate == null) {
+		return "";
+	    }
+	    else {
 		SimpleDateFormat date_format = new SimpleDateFormat("MM/dd/yyyy HH:mm");
 		return date_format.format(this.dueDate.getTime());
+	    }
 	}
 	/**
 	Returns the due date as a Calendar object
@@ -111,7 +116,9 @@ public class Task implements Serializable {
 	*/
 	public ArrayList<Task> getSubTasksList()
 	{
-		return subtasks;
+	    if (subtasks.size() != 0)
+		System.out.println("## THE SUBTASKS IS BEING USED!! ##");
+	    return subtasks;
 	}
 
 	/**

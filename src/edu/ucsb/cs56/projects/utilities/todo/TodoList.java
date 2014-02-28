@@ -409,11 +409,19 @@ public class TodoList implements Serializable {
 		{
 
 			public int compare(Task t1, Task t2)
-			{
+			{   
+			    if (t1.getDueDate().equals("")) {
+				return 1;
+			    }
+			    else if (t2.getDueDate().equals("")) {
+				return -1;
+			    }
+			    else {
 				Calendar date1 = t1.getCalendarForm();
 				Calendar date2 = t2.getCalendarForm();
 
 				return date1.compareTo(date2);
+			    }
 			}
 
 		};
