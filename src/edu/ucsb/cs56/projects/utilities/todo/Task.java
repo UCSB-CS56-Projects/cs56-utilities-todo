@@ -32,11 +32,27 @@ public class Task implements Serializable {
 	public Task(String taskName, int year, int month, int day, int hour, int min, Task parentTask)
 	{
 		this.taskName = taskName;
-		this.dueDate = new GregorianCalendar(year, month, day, hour, min);
+		//if no date and time
+		if (day == -1 && hour == -1)
+		this.dueDate = null;
+
+		//if no date//
+		else if (day == -1){
+		    this.dueDate = new GregorianCalendar(Calendar.getInstance().get(Calendar.YEAR), Calendar.getInstance().get(Calendar.MONTH), 
+							 Calendar.getInstance().get(Calendar.DATE), hour, min);
+					 
+		}    
+		//if no time
+		else if (hour == -1)
+		    this.dueDate = new GregorianCalendar(year, month, day);
+		    
+		//default
+		else
+		    {this.dueDate = new GregorianCalendar(year, month, day, hour, min);}
 		this.completed = false;
 		this.parentTask = parentTask;
 	}
-
+	
 	/**
 	No arg constructor for a single Task
 	*/
@@ -55,8 +71,13 @@ public class Task implements Serializable {
 	*/
 	public String getDueDate()
 	{
+	    if (this.dueDate == null) {
+		return "";
+	    }
+	    else {
 		SimpleDateFormat date_format = new SimpleDateFormat("MM/dd/yyyy HH:mm");
 		return date_format.format(this.dueDate.getTime());
+	    }
 	}
 	/**
 	Returns the due date as a Calendar object
@@ -95,7 +116,9 @@ public class Task implements Serializable {
 	*/
 	public ArrayList<Task> getSubTasksList()
 	{
-		return subtasks;
+	    if (subtasks.size() != 0)
+		System.out.println("## THE SUBTASKS IS BEING USED!! ##");
+	    return subtasks;
 	}
 
 	/**
@@ -107,12 +130,18 @@ public class Task implements Serializable {
 	public String toString()
 	{
 		String result = "";
-
-		if (this.completed == false)
+		if (this.dueDate != null){
+		    if (this.completed == false)
 			result = "[ ] " + this.getName() + " " + this.getDueDate();
-		else
+		    else
 			result = "[x] " + this.getName() + " " + this.getDueDate();
-
+		}
+		else{
+		    if (this.completed == false)
+			result = "[ ]" + " " + this.getName();
+		    else
+			result = "[x]" + " " +  this.getName();
+		}
 		return result;
 	}
 
