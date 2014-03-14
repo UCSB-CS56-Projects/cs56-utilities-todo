@@ -7,6 +7,8 @@ Multi-level todo list application.
 
 When complete, this application will allow user to create a todo list of tasks and subtasks that can be edited and sorted using an easy to use GUI.
 
+<img src="https://www.dropbox.com/s/5lpkzjgu7ew0z40/todo.png">
+
 run with 
 ```ant
 ant run
