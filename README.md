@@ -7,7 +7,7 @@ Multi-level todo list application.
 
 When complete, this application will allow user to create a todo list of tasks and subtasks that can be edited and sorted using an easy to use GUI.
 
-TODO FIX javadoc: http://www.cs.ucsb.edu/~khalid/cs56/cs56-utilities-todo/javadoc
+javadoc: http://www.cs.ucsb.edu/~khalid/cs56/cs56-utilities-todo/javadoc
 
 Programmer Notes
 ================
