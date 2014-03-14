@@ -26,8 +26,17 @@ import java.awt.event.*;
 public class Todo implements Serializable {
 
     private JFrame frame;
-    private TodoList taskList = new TodoList();
-
+    private TodoList taskList;
+    private ArrayList<JCheckBox> checks;
+    private ArrayList<JButton> buttons;
+    private ArrayList<JLabel> taskLabels;
+    private JPanel mainPanel;
+    private JTextField addField;
+    private HashMap<Task, JCheckBox> checksTasks;
+    private HashMap<Task, JButton> buttonsTasks;
+    private HashMap<Task, JLabel> labelsTasks;
+    private HashMap<JButton, JLabel> buttonsLabels;
+    private boolean sorted;
 
     /**
        The main method
@@ -182,8 +191,23 @@ public class Todo implements Serializable {
 	//build gui
 
 	frame = new JFrame("Todo List");
-	JPanel mainPanel = new JPanel();
+	frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	
+	taskList = new TodoList();
+	checks = new ArrayList<JCheckBox>();
+	buttons = new ArrayList<JButton>();
+	taskLabels = new ArrayList<JLabel>();
+	mainPanel = new JPanel();
+	checksTasks = new HashMap<Task, JCheckBox>();
+	buttonsTasks = new HashMap<Task, JButton>();
+	labelsTasks = new HashMap<Task, JLabel>();
+	buttonsLabels = new HashMap<JButton, JLabel>();
+	sorted = false;
+	
+
+	JPanel sortPanel = new JPanel();
+	JPanel addPanel = new JPanel();
+	mainPanel.setPreferredSize(new Dimension(550, 600));
 	//exit
 	frame.addWindowListener(new WindowAdapter()
 	    {
@@ -202,14 +226,16 @@ public class Todo implements Serializable {
 		}
 	    });
 	
-
-
-		
 	//default operation is for serialized list to be loaded
 	try{
-	    ObjectInputStream iStream = 
-		new ObjectInputStream(new FileInputStream("savedLists/todo.ser"));
-	    taskList = (TodoList) iStream.readObject();
+	    File file = new File("savedLists/todo.ser");
+	    if (!file.exists() || file.length() == 0) 
+		;
+	    else {
+		ObjectInputStream iStream = 
+		    new ObjectInputStream(new FileInputStream(file));
+		taskList = (TodoList) iStream.readObject();
+	    }
 	}
 	catch(IOException e)
 	    {
@@ -222,8 +248,48 @@ public class Todo implements Serializable {
 	    {
 		System.err.println("Caught ClassNotFoundException: " + e.getMessage());
 	    }
+
+	//adds mainPanel components to their respective ArrayLists
+	for (int i=0; i< taskList.getTasks().size(); i++) {
+
+	    //checks for completion and removes "[]" or "[x]"
+	    String taskInfo = taskList.getTasks().get(i).toString();
+	    if (taskInfo.indexOf("x") == 1) {
+		taskInfo = taskInfo.substring(4);
+	    }
+	    else {
+		taskInfo = taskInfo.substring(3);
+	    }
+
+	    
+	    JCheckBox checkTemp = new JCheckBox();
+	    checks.add(checkTemp);
+	    checksTasks.put(taskList.getTasks().get(i), checkTemp);
+
+	    JButton buttonTemp = new JButton("Delete");
+	    buttons.add(buttonTemp);
+	    buttons.get(buttons.size()-1).addActionListener(new DeleteListener());
+	    buttonsTasks.put(taskList.getTasks().get(i), buttonTemp);
+
+	    JLabel labelTemp = new JLabel(taskInfo);
+	    taskLabels.add(labelTemp);
+	    labelsTasks.put(taskList.getTasks().get(i), labelTemp);
+	}
+	
+	//displays the mainPanel components
+        this.displayTasks();
 					    
-		
+       	JButton sortNameButton = new JButton("SORT BY NAME");
+       	JButton sortCompletionButton = new JButton("SORT BY COMPLETION");
+       	JButton sortDateButton = new JButton("SORT BY DATE");
+
+	//	sortNameButton.addActionListener(new sortNameListener());
+	//	sortCompletionButton.addActionListener(new sortCompletionListener());
+	//	sortDateButton.addActionListener(new sortDateListener());
+
+        addField = new JTextField("", 20);
+	JButton addButton = new JButton("ADD TASK");
+	
 	JMenuBar menuBar = new JMenuBar();
 	JMenu fileMenu = new JMenu("File");
 	JMenuItem loadMenuItem = new JMenuItem("Load");
@@ -234,31 +300,117 @@ public class Todo implements Serializable {
 	fileMenu.add(saveMenuItem);
 	menuBar.add(fileMenu);
 	frame.setJMenuBar(menuBar);
-	frame.getContentPane().add(BorderLayout.CENTER,mainPanel);
-	frame.setSize(1580,1000);
-	frame.setVisible(true);
-	System.out.println("text");	
+	frame.getContentPane().add(BorderLayout.NORTH, mainPanel);
+	frame.getContentPane().add(BorderLayout.SOUTH, addPanel);
+	frame.getContentPane().add(BorderLayout.CENTER, sortPanel);
+        sortPanel.add(sortNameButton);
+        sortPanel.add(sortDateButton);
+	sortPanel.add(sortCompletionButton);
+        addPanel.add(addField);
+        addPanel.add(addButton);
+	addPanel.add(new JLabel("(Taskname MM/DD/YY HH:TT)"));
+	addButton.addActionListener(new AddListener());
+	frame.setSize(600,800);
+	frame.setVisible(true);	
 
     }
 
     //load from file
     public class LoadListener implements ActionListener {
 	public void actionPerformed(ActionEvent ev) {
-	    JFileChooser fileOpen = new JFileChooser();
-	    fileOpen.showOpenDialog(frame);
-	    taskList.readFile(fileOpen.getSelectedFile());
-		    
+	    try {
+		JFileChooser fileOpen = new JFileChooser();
+		fileOpen.showOpenDialog(frame);
+		taskList.readFile(fileOpen.getSelectedFile());
+		mainPanel.removeAll();
+		mainPanel.repaint();
+		//  displayTasks();
+	    } catch (Exception ex) {
+		ex.printStackTrace();
+	    }
 	}
     }
 
+    public class sortNameListener implements ActionListener {
+	public void actionPerformed(ActionEvent ev) {
+	    sorted = true;
+	    taskList.getSortedTasks().clear();
+	    taskList.updateSortedList(taskList.getTasks(), taskList.getSortedTasks());
+	    Collections.sort(taskList.getSortedTasks(), taskList.compareByName());
 
-    // public class AddListener implements ActionListener {}
+	    mainPanel.removeAll();
+	    mainPanel.repaint();
+	    displayTasks();
+	}
+    }
+    public class sortCompletionListener implements ActionListener {
+	public void actionPerformed(ActionEvent ev) {
 
-    // public class SortListener implements ActionListener {}
+	}
 
-    // public class DeleteListener implements ActionListener {}
+    }
+    public class sortDateListener implements ActionListener {
+	public void actionPerformed(ActionEvent ev) {
+
+	}
+    }
+
+    public class DeleteListener implements ActionListener {
+	public void actionPerformed(ActionEvent ev) {
+	    int i = 0;
+	    for(i=0;i<buttons.size();i++) {
+		if (ev.getSource().equals(buttons.get(i))) {
+		    break;
+		}
+	    }
+
+	    taskList.deleteTask(i);
+	    taskLabels.remove(i);
+
+	    System.out.println(taskList.getTasks());
+	    // checksTasks.remove(taskList.getTasks().get(i));
+	    // buttonsTasks.remove(taskList.getTasks().get(i));
+	    buttonsLabels.remove(buttons.get(i));
+
+	    mainPanel.removeAll();
+	    mainPanel.repaint();
+	    displayTasks();
+	}
+    }
 	    
-    // public class QuickaddListener implements ActionListener {}
+    public class AddListener implements ActionListener {
+	public void actionPerformed(ActionEvent ev) {
+	    taskList.addTask(addField.getText());
+
+	    String taskInfo = taskList.getTasks().get(taskList.getTasks().size() - 1).toString();
+	    if (taskInfo.indexOf("x") == 1) {
+		taskInfo = taskInfo.substring(4);
+	    }
+	    else {
+		taskInfo = taskInfo.substring(3);
+	    }
+
+	    //add new checkbox, button, and label to their respective ArrayLists and Maps
+	    JCheckBox checkTemp = new JCheckBox();
+	    checks.add(checkTemp);
+	    checksTasks.put(taskList.getTasks().get(taskList.getTasks().size()-1), checkTemp);
+
+	    JButton buttonTemp = new JButton("Delete");
+	    buttons.add(buttonTemp);
+	    buttons.get(buttons.size()-1).addActionListener(new DeleteListener());
+	    buttonsTasks.put(taskList.getTasks().get(taskList.getTasks().size()-1), buttonTemp);
+
+	    JLabel labelTemp = new JLabel(taskInfo);
+	    taskLabels.add(labelTemp);
+	    labelsTasks.put(taskList.getTasks().get(taskList.getTasks().size()-1), labelTemp);
+
+
+	    addField.setText("");
+	    mainPanel.removeAll();
+	    mainPanel.repaint();
+	    displayTasks();
+	}
+    }
 
     public class SaveListener implements ActionListener {
 	public void actionPerformed(ActionEvent ev) {
@@ -267,12 +419,40 @@ public class Todo implements Serializable {
 	    fileSave.setCurrentDirectory(f);
 	    int retrieval = fileSave.showSaveDialog(null);
 	    if (retrieval == JFileChooser.APPROVE_OPTION) {
-		taskList.printTasksToFile(taskList.getTasks(),0,f);
+		taskList.printTasksToFile(taskList.getTasks(),0,fileSave.getSelectedFile());
 	    }	   
 	}
     }
-    
 
+    public void displayTasks() {
+	if(sorted) {
+	    for(int i=0; i<taskList.getSortedTasks().size(); i++) {
+		labelsTasks.get(taskList.getSortedTasks().get(i)).setPreferredSize(new Dimension(470,20));
+		mainPanel.add(checksTasks.get(taskList.getSortedTasks().get(i)));
+		mainPanel.add(labelsTasks.get(taskList.getSortedTasks().get(i)));
+		mainPanel.add(buttonsTasks.get(taskList.getSortedTasks().get(i)));
+	    }
+	}
+	else {
+	    for(int i=0; i<taskList.getTasks().size(); i++) {
+		taskLabels.get(i).setPreferredSize(new Dimension(470,20));
+		mainPanel.add(checks.get(i));
+		mainPanel.add(taskLabels.get(i));
+		mainPanel.add(buttons.get(i));
+	    }
+	}
+	mainPanel.validate();
+    }
+    /*    
+    public void displaySortedTasks() {
+	for(int i=0; i<taskList.getSortedTasks().size(); i++) {
+	    labelsTasks.get(taskList.getSortedTasks().get(i)).setPreferredSize(new Dimension(470,20));
+	    mainPanel.add(checksTasks.get(taskList.getSortedTasks().get(i)));
+	    mainPanel.add(labelsTasks.get(taskList.getSortedTasks().get(i)));
+	    mainPanel.add(buttonsTasks.get(taskList.getSortedTasks().get(i)));
+	}
+	mainPanel.validate();
+	}*/
 }
 	
 
