@@ -62,7 +62,7 @@
   <!-- TODO: add attribute fork="true" for gui -->
   <target name="run" depends="compile" description="run the todo application">
    <mkdir dir= "savedLists" /> 
-   <java classname="${projectPackage}.Todo" classpath="build" /> 
+   <java classname="${projectPackage}.Todo" classpath="build" fork="true"/> 
   </target>
 
 

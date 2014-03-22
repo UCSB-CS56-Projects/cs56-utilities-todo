@@ -42,13 +42,15 @@ public class TodoList implements Serializable {
 	Method that instigates dialog asking for input of a task, and due date from the user
 	It then creates a new Task, and puts that in the ArrayList
 	*/
-	public void addTasks()
+	public void addTask(String quickInput)
 	{
+	    /*
 		Scanner scanner = new Scanner(System.in);
 		System.out.println("Quick add: y or n?");
 		String quickAdd= scanner.nextLine();
 		String quickInput = "";
-		String taskName = "";
+	    */
+      		String taskName = "";
 		String date = "";
 		String time = "";
 		int hour = -1;
@@ -56,10 +58,11 @@ public class TodoList implements Serializable {
 		int month = -1;
 		int day = -1;
 		int year = -1;
-
+       	/*
       		if (quickAdd.equals("y")){
 		    System.out.println("Enter in following format: Taskname MM/DD/YY HH:mm");
 		    quickInput = scanner.nextLine();
+	    */
 		    String[] taskParts = quickInput.split(" ");
 
 		    boolean isTaskName = true;
@@ -80,7 +83,6 @@ public class TodoList implements Serializable {
 		    }
 		    taskName = taskName.substring(0,taskName.length()-1);
 
-		    System.out.println(taskName);
 		    if (quickInput.contains("/") && quickInput.contains(":")) {
 			date = taskParts[i];
 			time = taskParts[i+1];
@@ -91,6 +93,7 @@ public class TodoList implements Serializable {
 		    else if (quickInput.contains(":")) {
 			time = taskParts[i];
 		    }
+	     /*
 		    
       		}
     		else{
@@ -102,6 +105,7 @@ public class TodoList implements Serializable {
 		    System.out.println("At what time? (HH:MM)");
 		    time = scanner.nextLine();
 		}
+	     */
 		
 		
 		//PARING AND ASSIGNING NAME AND DATE VALUES
@@ -155,31 +159,33 @@ public class TodoList implements Serializable {
 			    Task newTask = new Task(taskName, year, month, day, hour, min, null);
 			     this.tasks.add(newTask);
 		    }
+	     
 
 	}
 
 	/**
 	Method that instigates dialog asking for input to delete a task
 	*/
-	public void deleteTasks()
+	public void deleteTask(int index)
 	{
-		Scanner scanner = new Scanner(System.in);
-		System.out.println("What's the task would you like to delete?");
-		String taskName = scanner.nextLine();
+		// Scanner scanner = new Scanner(System.in);
+		// System.out.println("What's the task would you like to delete?");
+		// String taskName = scanner.nextLine();
 
-		Task findTask = this.search(taskName);
+	        // Task findTask = this.search(taskName);
 
-		if (findTask != null && findTask.getParentTask() != null)
-		{
-			Task parentTask = findTask.getParentTask();
-			parentTask.getSubTasksList().remove(findTask);
-		}
-		else if (findTask != null)
-		{
-			this.tasks.remove(findTask);
-		}
-		else
-			System.out.println("Not a valid task name");
+		// if (findTask != null && findTask.getParentTask() != null)
+		// {
+		// 	Task parentTask = findTask.getParentTask();
+		// 	parentTask.getSubTasksList().remove(findTask);
+		// }
+		// else if (findTask != null)
+		// {
+		// 	this.tasks.remove(findTask);
+		// }
+		// else
+		// 	System.out.println("Not a valid task name");
+	    this.tasks.remove(index);
 
 	}
 
@@ -328,6 +334,7 @@ public class TodoList implements Serializable {
     */
     public ArrayList<Task> readFile(File f){
 	try{
+
 	    FileReader fileReader = new FileReader(f);
 	    BufferedReader reader = new BufferedReader(fileReader);
 	    String line= null;
@@ -339,7 +346,7 @@ public class TodoList implements Serializable {
 		String[] spaceSplit = bracketSplit[1].split(" ");
 		String name = spaceSplit[1];
 		String fullDate;
-	        String time;
+		String time;
 
 		String[] slashSplit;
 		String[] colonSplit;
@@ -369,13 +376,14 @@ public class TodoList implements Serializable {
 		
 		Task task = new Task(name, year, month, day, hour, min, parentTask);
 
-	     	if (complete.contains("x")){task.markCompleted();}
-		tasks.add(task);		
+		if (complete.contains("x")){task.markCompleted();}
+		tasks.add(task);
+		reader.close();
 	    }
-	    reader.close();
 	}catch(Exception ex) {
 	    ex.printStackTrace();
 	}
+
 	return tasks;
     }
 		
