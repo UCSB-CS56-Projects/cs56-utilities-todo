@@ -5,6 +5,10 @@ import java.util.ArrayList;
 import java.text.SimpleDateFormat;
 import java.util.GregorianCalendar;
 import java.io.Serializable;
+import javax.swing.*;
+import java.awt.*;
+import java.util.*;
+import java.awt.event.*;
 
 /**
 	A single task in a todo list
@@ -19,15 +23,17 @@ public class Task implements Serializable {
 	private boolean completed;
 	private ArrayList<Task> subtasks = new ArrayList<Task>();
 	private Task parentTask;
-
+        private JCheckBox check;
+        private JButton deleteButton;
+        private JLabel label;
 	/**
 	Constructor for a single task
-	@parem taskName the name of the new task
-	@parem year the year in which the due date is
-	@parem month the month in which the due date is
-	@parem day the day in which the due date is
-	@parem hour the hour in which the due date is
-	@parem min the minute at which the due date is
+	@param taskName the name of the new task
+	@param year the year in which the due date is
+	@param month the month in which the due date is
+	@param day the day in which the due date is
+	@param hour the hour in which the due date is
+	@param min the minute at which the due date is
 	*/
 	public Task(String taskName, int year, int month, int day, int hour, int min, Task parentTask)
 	{
@@ -144,5 +150,17 @@ public class Task implements Serializable {
 		}
 		return result;
 	}
+    public void setCheck(JCheckBox check){this.check = check;}
+    public JCheckBox getCheck(){return this.check;}
+    public void setDelete(JButton deleteButton){this.deleteButton = deleteButton;}
+    public JButton getDelete(){return this.deleteButton;}
+    public void setLabel(){
+	this.label = new JLabel(this.taskName);
+	this.label.setPreferredSize(new Dimension(470,20));
+    }
+    public JLabel getLabel(){
+	this.setLabel();
+	return this.label;
+    }
 
 }

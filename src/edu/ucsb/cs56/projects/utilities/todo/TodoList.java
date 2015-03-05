@@ -22,8 +22,9 @@ public class TodoList implements Serializable {
 	private ArrayList<Task> tasks = new ArrayList<Task>();
 	private ArrayList<Task> sortedTasks = new ArrayList<Task>();
 
-    /**
+        /**
 	Getter for ArrayList of level 1 tasks
+	@return and ArrayList of the tasks that the user put in
 	*/
 	public ArrayList<Task> getTasks()
 	{
@@ -32,6 +33,7 @@ public class TodoList implements Serializable {
 
 	/**
 	Getter for the ArrayList of all tasks, sorted
+	@return an ArrayList of the sorted tasks 
 	*/
 	public ArrayList<Task> getSortedTasks()
 	{
@@ -41,6 +43,7 @@ public class TodoList implements Serializable {
 	/**
 	Method that instigates dialog asking for input of a task, and due date from the user
 	It then creates a new Task, and puts that in the ArrayList
+	@param quickInput the computer asks for input from the user to add a task
 	*/
 	public void addTask(String quickInput)
 	{
@@ -165,6 +168,7 @@ public class TodoList implements Serializable {
 
 	/**
 	Method that instigates dialog asking for input to delete a task
+	@param index The index of the taks that will be deleted
 	*/
 	public void deleteTask(int index)
 	{
@@ -214,6 +218,8 @@ public class TodoList implements Serializable {
 
 	/**
 	Method that searches one item in the ArrayList, and all associted subtasks
+	@param parentTaskName the name of the parent task
+	@param desTask the task being searched for
 	*/
 	public Task findInOneComponent(String parentTaskName, Task desTask)
 	{
@@ -233,9 +239,8 @@ public class TodoList implements Serializable {
 		return null;
 	}
 	/**
-	Method that searches all of the tasks asscoiated with a TodoList object. Uses the findInOneComponent method on each level 1 taske
-
-	@see findInOneComponent
+	Method that searches all of the tasks asscoiated with a TodoList object. Uses the findInOneComponent method on each level 1 task
+	@param parentTaskName the name of the task being searched for 
 	*/
 	public Task search(String parentTaskName)
 	{
