@@ -45,7 +45,7 @@ public class TodoList implements Serializable {
 	It then creates a new Task, and puts that in the ArrayList
 	@param quickInput the computer asks for input from the user to add a task
 	*/
-	public void addTask(String quickInput)
+    public Task makeTask(String quickInput)
 	{
 	    /*
 		Scanner scanner = new Scanner(System.in);
@@ -160,11 +160,14 @@ public class TodoList implements Serializable {
 		else
 		    {
 			    Task newTask = new Task(taskName, year, month, day, hour, min, null);
-			     this.tasks.add(newTask);
+			       	return newTask;
 		    }
-	     
-
+		return null;
+	
 	}
+    public void addTask(Task newTask){
+	this.tasks.add(newTask);
+    }
 
 	/**
 	Method that instigates dialog asking for input to delete a task

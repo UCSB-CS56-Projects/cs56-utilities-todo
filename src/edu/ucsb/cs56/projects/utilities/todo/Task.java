@@ -26,6 +26,9 @@ public class Task implements Serializable {
         private JCheckBox check;
         private JButton deleteButton;
         private JLabel label;
+        private JButton editButton;
+        private JTextField userInput;
+
 	/**
 	Constructor for a single task
 	@param taskName the name of the new task
@@ -156,11 +159,14 @@ public class Task implements Serializable {
     public JButton getDelete(){return this.deleteButton;}
     public void setLabel(){
 	this.label = new JLabel(this.taskName);
-	this.label.setPreferredSize(new Dimension(470,20));
+	this.label.setPreferredSize(new Dimension(400,20));
     }
     public JLabel getLabel(){
 	this.setLabel();
 	return this.label;
     }
-
+    public void setEdit(JButton editButton){this.editButton = editButton;}
+    public JButton getEdit(){return this.editButton;}
+    public void setUserInput(JTextField userInput){this.userInput = userInput;}
+    public JTextField getUserInput(){return this.userInput;}
 }
