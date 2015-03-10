@@ -44,6 +44,7 @@ public class TodoList implements Serializable {
 	Method that instigates dialog asking for input of a task, and due date from the user
 	It then creates a new Task, and puts that in the ArrayList
 	@param quickInput the computer asks for input from the user to add a task
+	@return Task that was just created
 	*/
     public Task makeTask(String quickInput)
 	{
@@ -109,8 +110,8 @@ public class TodoList implements Serializable {
 		    year = -1;
 		}
 		else {
-		    month = Integer.parseInt(dateTokens[0]) -1;                                                                                                        
-                    day   = Integer.parseInt(dateTokens[1]);                                                                                                           
+		    month = Integer.parseInt(dateTokens[0]) -1;                                                                                          
+                    day   = Integer.parseInt(dateTokens[1]);                                                                                                
                     year  = Integer.parseInt(dateTokens[2]) + 2000;      
 		}
 		if (nameTokens.length == 1)
@@ -140,6 +141,10 @@ public class TodoList implements Serializable {
 		return null;
 	
 	}
+    /**
+       Adds a new task to the list
+       @param newTask the task to be added
+     */
     public void addTask(Task newTask){
 	this.tasks.add(newTask);
     }
@@ -179,6 +184,7 @@ public class TodoList implements Serializable {
 	Method that searches one item in the ArrayList, and all associted subtasks
 	@param parentTaskName the name of the parent task
 	@param desTask the task being searched for
+	@return The task found
 	*/
 	public Task findInOneComponent(String parentTaskName, Task desTask)
 	{
@@ -199,7 +205,8 @@ public class TodoList implements Serializable {
 	}
 	/**
 	Method that searches all of the tasks asscoiated with a TodoList object. Uses the findInOneComponent method on each level 1 task
-	@param parentTaskName the name of the task being searched for 
+	@param parentTaskName the name of the task being searched for
+	@return the Task found
 	*/
 	public Task search(String parentTaskName)
 	{
@@ -218,6 +225,8 @@ public class TodoList implements Serializable {
 
 	/**
 	Method that prints out a few lines of code to make a "pretty" interface on the command line
+	@param tasklist list of tasks in todoList
+	@param heriarchyNum 
 	*/
 	public void printTasks(ArrayList<Task> tasklist, int heriarchyNum)
 	{
@@ -239,6 +248,8 @@ public class TodoList implements Serializable {
         
     /**
        Method that prints the list of tasks onto a text file
+       @param tasklist list of tasks in todoList
+       @param heriarchyNum
     */
     public void printTasksToFile(ArrayList<Task> tasklist, int heriarchyNum, File f){
 	    try{
@@ -256,6 +267,7 @@ public class TodoList implements Serializable {
 	/**
 	Uncompleted tasks are printed out in list form. I'd always envisioned this as a single list,
 	but might add nested support, as it should be an easy fix
+	@param tasklist list of tasks in todoList
 	*/
 	public void printByCompletion(ArrayList<Task> tasklist)
 	{
@@ -273,7 +285,11 @@ public class TodoList implements Serializable {
 	}
 
 	/**
-	Prints the tasks that have a due date of the current day, month and year.
+	Prints the tasks that have a due date of the current day, month and year
+	@param tasklist list of tasks in todoList
+	@param day day of the month
+	@param month the month of desired tasks
+	@param year the year of desired tasks
 	*/
 	public void printToday(ArrayList<Task> tasklist, int day, int month, int year)
 	{
@@ -294,6 +310,8 @@ public class TodoList implements Serializable {
     
     /**
     Reads a todo list from a text file.
+    @return Todolist read from serialized file
+    @param f file to be read from
     */
     public TodoList readFile(File f){
 	TodoList newList=null;
@@ -310,6 +328,9 @@ public class TodoList implements Serializable {
 	/**
 	The idea is that TodoList has a list of all tasks but is only updated when the user
 	wants to sort by name or date. The list is first emptied and refilled with this function.
+	This method does not sort the list
+	@param tasklist the unsorted list
+	@param sortedList the list that will be populated with the unsorted list
 	*/
 	public void updateSortedList(ArrayList<Task> tasklist, ArrayList<Task> sortedList)
 	{

@@ -347,7 +347,7 @@ public class Todo implements Serializable {
 	    mainPanel.validate();
 	}
     }
-    class deleteCompleted implements ActionListener{
+    public class deleteCompleted implements ActionListener{
 	public void actionPerformed(ActionEvent ev){
 	    if(sorted==true){
 		for(int i = 0; i<taskList.getSortedTasks().size();i++){
