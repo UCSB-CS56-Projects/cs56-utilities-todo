@@ -158,7 +158,14 @@ public class Task implements Serializable {
     public void setDelete(JButton deleteButton){this.deleteButton = deleteButton;}
     public JButton getDelete(){return this.deleteButton;}
     public void setLabel(){
-	this.label = new JLabel(this.taskName);
+        String taskInfo = this.toString();
+        if (taskInfo.indexOf("x") == 1) {
+	    taskInfo = taskInfo.substring(4);
+	}
+	else {
+	    taskInfo = taskInfo.substring(3);
+        }
+	this.label = new JLabel(taskInfo);
 	this.label.setPreferredSize(new Dimension(400,20));
     }
     public JLabel getLabel(){

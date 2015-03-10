@@ -19,8 +19,8 @@ import java.io.*;
 */
 public class TodoList implements Serializable {
 
-	private ArrayList<Task> tasks = new ArrayList<Task>();
-	private ArrayList<Task> sortedTasks = new ArrayList<Task>();
+    private ArrayList<Task> tasks = new ArrayList<Task>();
+    private ArrayList<Task> sortedTasks = new ArrayList<Task>();
 
         /**
 	Getter for ArrayList of level 1 tasks
@@ -153,6 +153,7 @@ public class TodoList implements Serializable {
 			{
 				Task newTask = new Task(taskName, year, month, day, hour, min, parentTask);
 				parentTask.getSubTasksList().add(parentTask.getSubTasksList().size(), newTask);
+				return newTask;
 			}
 			else
 				System.out.println("Not a valid parent task!");
@@ -284,16 +285,15 @@ public class TodoList implements Serializable {
     /**
        Method that prints the list of tasks onto a text file
     */
-    public void printTasksToFile(ArrayList<Task> tasklist, int hierarchyNum, File f)
-        {
-	    
+    public void printTasksToFile(ArrayList<Task> tasklist, int heriarchyNum, File f){
 	    try{
-		FileWriter writer= new FileWriter(f);
-		for (Task t: tasklist){
-		    writer.write(t.toString() + "\n");
-		}
-		writer.close();
-	    } catch(IOException ex) {
+		FileOutputStream fileOut = new FileOutputStream(f);
+		ObjectOutputStream out = new ObjectOutputStream(fileOut);
+		out.writeObject(this);
+		out.close();
+		fileOut.close();
+	    }
+	    catch(IOException ex) {
 		ex.printStackTrace();
 	    }
 	}
@@ -340,59 +340,16 @@ public class TodoList implements Serializable {
     /**
     Reads a todo list from a text file.
     */
-    public ArrayList<Task> readFile(File f){
+    public TodoList readFile(File f){
+	TodoList newList=null;
 	try{
-
-	    FileReader fileReader = new FileReader(f);
-	    BufferedReader reader = new BufferedReader(fileReader);
-	    String line= null;
-	    Task parentTask = new Task();
-	    while ((line=reader.readLine()) !=null) {
-		String[] bracketSplit = line.split("]");
-		String complete = bracketSplit[0];
-      
-		String[] spaceSplit = bracketSplit[1].split(" ");
-		String name = spaceSplit[1];
-		String fullDate;
-		String time;
-
-		String[] slashSplit;
-		String[] colonSplit;
-
-		int month = -1;
-		int day = -1;
-		int year = -1;
-
-		int hour = -1;
-		int min = -1;
-		
-		if (spaceSplit.length > 2) {
-
-		    fullDate = spaceSplit[2];
-		    time = spaceSplit[3];
-
-		    slashSplit = fullDate.split("/");
-		    colonSplit = time.split(":");
-
-		    month = Integer.parseInt(slashSplit[0]);
-		    day   = Integer.parseInt(slashSplit[1]);
-		    year  = Integer.parseInt(slashSplit[2]);
-
-		    hour  = Integer.parseInt(colonSplit[0]);
-		    min   = Integer.parseInt(colonSplit[1]);
-		}
-		
-		Task task = new Task(name, year, month, day, hour, min, parentTask);
-
-		if (complete.contains("x")){task.markCompleted();}
-		tasks.add(task);
-		reader.close();
-	    }
+	    FileInputStream fileIn = new FileInputStream(f);
+	    ObjectInputStream in = new ObjectInputStream(fileIn);
+	    newList = (TodoList) in.readObject();
 	}catch(Exception ex) {
 	    ex.printStackTrace();
 	}
-
-	return tasks;
+	return newList;
     }
 		
 	/**
