@@ -39,35 +39,6 @@ public class Todo implements Serializable {
       	boolean end = true;
       	TodoList taskList = new TodoList();
        	Scanner scanner = new Scanner(System.in);  
-	/*	System.out.println("Would you like to load a todo list from a text file? (yes or no)");
-       	String yesOrNo = scanner.nextLine();
-       	if (yesOrNo.equals("yes")){
-	    System.out.println("Filename (from savedLists folder):");
-	    String inputFile = "savedLists/"+ scanner.nextLine();
-	    try{
-		//System.out.println("Filename (from savedLists folder):");
-		//String inputFile = "savedLists/"+ scanner.nextLine();
-		taskList.readFile(new File(inputFile));
-	    } 
-	    //this catch not working// 
-	    catch (Exception ex) {
-		System.err.println("Caught FileNotFoundException:" + ex.getMessage());
-	    }
-       }
-       else{
-	   try{
-	       ObjectInputStream iStream = new ObjectInputStream(new FileInputStream("savedLists/todo.ser"));
-	       taskList = (TodoList) iStream.readObject();
-	   }
-	   catch(IOException e){
-	       if (e.getMessage().equals(e.getMessage()));
-	       else
-		 System.err.println("Caught IOException: " + e.getMessage());
-	   }
-	   catch(ClassNotFoundException e){
-	        System.err.println("Caught ClassNotFoundException: " + e.getMessage());
-	   }
-	   }*/
        	Todo todo = new Todo();
 	todo.go();
     } //main method
@@ -186,7 +157,7 @@ public class Todo implements Serializable {
 	public void actionPerformed(ActionEvent ev) {
 	    try {
 		JFileChooser fileOpen = new JFileChooser();
-		fileOpen.showOpenDialog(frame);
+		//fileOpen.showOpenDialog(frame);
 		int retrieval = fileOpen.showOpenDialog(null);
 		if (retrieval == JFileChooser.APPROVE_OPTION) {
 		    taskList = taskList.readFile(fileOpen.getSelectedFile());
@@ -285,6 +256,12 @@ public class Todo implements Serializable {
     public void displayTasks() {
 	if(sorted) {
 	    for(int i=0; i<taskList.getSortedTasks().size(); i++) {
+		JButton buttonTemp = new JButton("Delete");
+		buttonTemp.addActionListener(new DeleteListener(taskList.getTasks().get(i)));
+		JButton editTemp = new JButton("Edit");
+		editTemp.addActionListener(new EditListener(taskList.getTasks().get(i)));
+		taskList.getTasks().get(i).setEdit(editTemp);
+		taskList.getTasks().get(i).setDelete(buttonTemp);
 		mainPanel.add(taskList.getSortedTasks().get(i).getCheck());
 		mainPanel.add(taskList.getSortedTasks().get(i).getLabel());
 		mainPanel.add(taskList.getSortedTasks().get(i).getEdit());
@@ -293,6 +270,12 @@ public class Todo implements Serializable {
 	}
 	else {
   	    for(int i=0; i<taskList.getTasks().size(); i++) {
+		JButton buttonTemp = new JButton("Delete");
+		buttonTemp.addActionListener(new DeleteListener(taskList.getTasks().get(i)));
+		JButton editTemp = new JButton("Edit");
+		editTemp.addActionListener(new EditListener(taskList.getTasks().get(i)));
+		taskList.getTasks().get(i).setEdit(editTemp);
+		taskList.getTasks().get(i).setDelete(buttonTemp);
 		mainPanel.add(taskList.getTasks().get(i).getCheck());
 		mainPanel.add(taskList.getTasks().get(i).getLabel());
 		mainPanel.add(taskList.getTasks().get(i).getEdit());
