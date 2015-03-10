@@ -120,9 +120,9 @@ public class Todo implements Serializable {
        	JButton sortCompletionButton = new JButton("SORT BY COMPLETION");
        	JButton sortDateButton = new JButton("SORT BY DATE");
 
-	//	sortNameButton.addActionListener(new sortNameListener());
-	//	sortCompletionButton.addActionListener(new sortCompletionListener());
-	//	sortDateButton.addActionListener(new sortDateListener());
+       	sortNameButton.addActionListener(new sortNameListener());
+       	sortCompletionButton.addActionListener(new sortCompletionListener());
+       	sortDateButton.addActionListener(new sortDateListener());
 
         addField = new JTextField("", 20);
 	JButton addButton = new JButton("ADD TASK");
@@ -157,7 +157,6 @@ public class Todo implements Serializable {
 	public void actionPerformed(ActionEvent ev) {
 	    try {
 		JFileChooser fileOpen = new JFileChooser();
-		//fileOpen.showOpenDialog(frame);
 		int retrieval = fileOpen.showOpenDialog(null);
 		if (retrieval == JFileChooser.APPROVE_OPTION) {
 		    taskList = taskList.readFile(fileOpen.getSelectedFile());
@@ -177,7 +176,6 @@ public class Todo implements Serializable {
 	    taskList.getSortedTasks().clear();
 	    taskList.updateSortedList(taskList.getTasks(), taskList.getSortedTasks());
 	    Collections.sort(taskList.getSortedTasks(), taskList.compareByName());
-
 	    mainPanel.removeAll();
 	    mainPanel.repaint();
 	    displayTasks();
@@ -185,13 +183,25 @@ public class Todo implements Serializable {
     }
     public class sortCompletionListener implements ActionListener {
 	public void actionPerformed(ActionEvent ev) {
-
+	    sorted = true;
+	    taskList.getSortedTasks().clear();
+	    taskList.updateSortedList(taskList.getTasks(), taskList.getSortedTasks());
+	    Collections.sort(taskList.getSortedTasks(), taskList.compareByCompleted());
+	    mainPanel.removeAll();
+	    mainPanel.repaint();
+	    displayTasks();
 	}
 
     }
     public class sortDateListener implements ActionListener {
 	public void actionPerformed(ActionEvent ev) {
-
+	    sorted = true;
+	    taskList.getSortedTasks().clear();
+	    taskList.updateSortedList(taskList.getTasks(), taskList.getSortedTasks());
+	    Collections.sort(taskList.getSortedTasks(), taskList.compareByDate());
+	    mainPanel.removeAll();
+	    mainPanel.repaint();
+	    displayTasks();
 	}
     }
 
@@ -202,6 +212,7 @@ public class Todo implements Serializable {
 	}
 	public void actionPerformed(ActionEvent ev) {
 	    taskList.getTasks().remove(this.myTask);
+	    taskList.getSortedTasks().remove(this.myTask);
 	    mainPanel.removeAll();
 	    mainPanel.repaint();
 	    displayTasks();
@@ -211,6 +222,7 @@ public class Todo implements Serializable {
 	    
     public class AddListener implements ActionListener {
 	public void actionPerformed(ActionEvent ev) {
+	    sorted = false;
 	    taskList.addTask(taskList.makeTask(addField.getText()));
 	    //add new checkbox and buttons
 	    JCheckBox checkTemp = new JCheckBox();
@@ -254,19 +266,20 @@ public class Todo implements Serializable {
     }
 
     public void displayTasks() {
-	if(sorted) {
+	if(sorted==true) {
 	    for(int i=0; i<taskList.getSortedTasks().size(); i++) {
 		JButton buttonTemp = new JButton("Delete");
-		buttonTemp.addActionListener(new DeleteListener(taskList.getTasks().get(i)));
+		buttonTemp.addActionListener(new DeleteListener(taskList.getSortedTasks().get(i)));
 		JButton editTemp = new JButton("Edit");
-		editTemp.addActionListener(new EditListener(taskList.getTasks().get(i)));
-		taskList.getTasks().get(i).setEdit(editTemp);
-		taskList.getTasks().get(i).setDelete(buttonTemp);
+		editTemp.addActionListener(new EditListener(taskList.getSortedTasks().get(i)));
+		taskList.getSortedTasks().get(i).setEdit(editTemp);
+		taskList.getSortedTasks().get(i).setDelete(buttonTemp);
 		mainPanel.add(taskList.getSortedTasks().get(i).getCheck());
 		mainPanel.add(taskList.getSortedTasks().get(i).getLabel());
 		mainPanel.add(taskList.getSortedTasks().get(i).getEdit());
 		mainPanel.add(taskList.getSortedTasks().get(i).getDelete());
 	    }
+	mainPanel.validate();
 	}
 	else {
   	    for(int i=0; i<taskList.getTasks().size(); i++) {
@@ -287,10 +300,25 @@ public class Todo implements Serializable {
     public void displayTasks(Task myTask) {
 	if(sorted) {
 	    for(int i=0; i<taskList.getSortedTasks().size(); i++) {
-		mainPanel.add(taskList.getSortedTasks().get(i).getCheck());
-		mainPanel.add(taskList.getSortedTasks().get(i).getLabel());
-		mainPanel.add(taskList.getSortedTasks().get(i).getDelete());
+		Task thisTask = taskList.getSortedTasks().get(i);
+		if(thisTask==myTask){
+		    mainPanel.add(thisTask.getCheck());
+		    JTextField input = new JTextField(thisTask.getName(),35);
+		    thisTask.setUserInput(input);
+		    mainPanel.add(thisTask.getUserInput());
+		    JButton enterButton = new JButton("Enter");
+		    enterButton.addActionListener(new enterListener(thisTask));
+		    mainPanel.add(enterButton);
+		    mainPanel.add(thisTask.getDelete());
+		}
+		else{
+		    mainPanel.add(thisTask.getCheck());
+		    mainPanel.add(thisTask.getLabel());
+		    mainPanel.add(thisTask.getEdit());
+		    mainPanel.add(thisTask.getDelete());
+		}
 	    }
+	    mainPanel.validate();
 	}
 	else {
   	    for(int i=0; i<taskList.getTasks().size(); i++) {

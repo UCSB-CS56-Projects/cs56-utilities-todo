@@ -47,12 +47,6 @@ public class TodoList implements Serializable {
 	*/
     public Task makeTask(String quickInput)
 	{
-	    /*
-		Scanner scanner = new Scanner(System.in);
-		System.out.println("Quick add: y or n?");
-		String quickAdd= scanner.nextLine();
-		String quickInput = "";
-	    */
       		String taskName = "";
 		String date = "";
 		String time = "";
@@ -61,56 +55,36 @@ public class TodoList implements Serializable {
 		int month = -1;
 		int day = -1;
 		int year = -1;
-       	/*
-      		if (quickAdd.equals("y")){
-		    System.out.println("Enter in following format: Taskname MM/DD/YY HH:mm");
-		    quickInput = scanner.nextLine();
-	    */
-		    String[] taskParts = quickInput.split(" ");
+		String[] taskParts = quickInput.split(" ");
 
-		    boolean isTaskName = true;
-		    int i = 0;
-		    while (isTaskName) {
-			if (taskParts.length == 0) {
-			    isTaskName = false;
-			}
-			if (taskParts.length - i == 1) {
-			    isTaskName = false;
-			}
-			if (taskParts[i].contains("/") || taskParts[i].contains(":")) {
-			    isTaskName = false;
-			    break;
-			}
-			taskName = taskName + taskParts[i] + " ";
-			i++;
+	        boolean isTaskName = true;
+	        int i = 0;
+		while (isTaskName) {
+		   if (taskParts.length == 0) {
+		      isTaskName = false;
 		    }
-		    taskName = taskName.substring(0,taskName.length()-1);
+		    if (taskParts.length - i == 1) {
+		      isTaskName = false;
+		    }
+		    if (taskParts[i].contains("/") || taskParts[i].contains(":")) {
+			isTaskName = false;
+		        break;
+		    }
+		    taskName = taskName + taskParts[i] + " ";
+		    i++;
+	       }
+	       taskName = taskName.substring(0,taskName.length()-1);
 
-		    if (quickInput.contains("/") && quickInput.contains(":")) {
-			date = taskParts[i];
-			time = taskParts[i+1];
-		    }
-		    else if (quickInput.contains("/")) {
-			date = taskParts[i];
-		    }
-		    else if (quickInput.contains(":")) {
-			time = taskParts[i];
-		    }
-	     /*
-		    
-      		}
-    		else{
-		    System.out.println("What's the name of the task?");
-		    taskName = scanner.nextLine();
-		    System.out.println("What's its due date? (MM/DD/YY)");
-		    date = scanner.nextLine();
-		    //TODO: check and see if date is formmatted correctly
-		    System.out.println("At what time? (HH:MM)");
-		    time = scanner.nextLine();
-		}
-	     */
-		
-		
+	       if (quickInput.contains("/") && quickInput.contains(":")) {
+		   date = taskParts[i];
+		   time = taskParts[i+1];
+	       }
+	       else if (quickInput.contains("/")) {
+		   date = taskParts[i];
+	       }
+	       else if (quickInput.contains(":")) {
+		   time = taskParts[i];
+	       }
 		//PARING AND ASSIGNING NAME AND DATE VALUES
 		//BEGINS
 		String nameDelims = "[/]";
@@ -176,27 +150,8 @@ public class TodoList implements Serializable {
 	*/
 	public void deleteTask(int index)
 	{
-		// Scanner scanner = new Scanner(System.in);
-		// System.out.println("What's the task would you like to delete?");
-		// String taskName = scanner.nextLine();
-
-	        // Task findTask = this.search(taskName);
-
-		// if (findTask != null && findTask.getParentTask() != null)
-		// {
-		// 	Task parentTask = findTask.getParentTask();
-		// 	parentTask.getSubTasksList().remove(findTask);
-		// }
-		// else if (findTask != null)
-		// {
-		// 	this.tasks.remove(findTask);
-		// }
-		// else
-		// 	System.out.println("Not a valid task name");
 	    this.tasks.remove(index);
-
 	}
-
 	/**
 	Method that instigates dialog asking for input to mark a task as completed
 	*/
@@ -358,13 +313,12 @@ public class TodoList implements Serializable {
 	*/
 	public void updateSortedList(ArrayList<Task> tasklist, ArrayList<Task> sortedList)
 	{
-		for (int i = 0; i <tasklist.size(); i++)
-		{
-			sortedList.add(tasklist.get(i));
-
-			if (tasklist.get(i).getSubTasksList() != null)
-				updateSortedList(tasklist.get(i).getSubTasksList(), sortedList);
-		}
+	    for (int i = 0; i <tasklist.size(); i++)
+	    {
+		sortedList.add(tasklist.get(i));
+       		if (tasklist.get(i).getSubTasksList() != null)
+		    updateSortedList(tasklist.get(i).getSubTasksList(), sortedList);
+	    }
 	}
 
 	/**
@@ -372,48 +326,61 @@ public class TodoList implements Serializable {
 	*/
 	static Comparator<Task> compareByName()
 	{
-		return new Comparator<Task>()
-		{
-
-			public int compare(Task t1, Task t2)
-			{
-				String taskName1 = t1.getName().toUpperCase();
-				String taskName2 = t2.getName().toUpperCase();
-
-				return taskName1.compareTo(taskName2);
-			}
-
-		};
+	    return new Comparator<Task>(){
+	       	public int compare(Task t1, Task t2)
+	       	{
+		    String taskName1 = t1.getName().toUpperCase();
+		    String taskName2 = t2.getName().toUpperCase();
+		    return taskName1.compareTo(taskName2);
+	      	}
+	    };
 	}
-
     /**
+	A new Comparator that allows two strings to be compared by whether or not they're completed
+	*/
+	static Comparator<Task> compareByCompleted()
+	{
+	    return new Comparator<Task>(){
+       		public int compare(Task t1, Task t2)
+       		{   
+      		    if (t1.getCheck().isSelected()==true&&
+			t2.getCheck().isSelected()==false) {
+       			return 1;
+       		    }
+       		    else if (t1.getCheck().isSelected()==false&&
+			     t2.getCheck().isSelected()==true) {
+       			return -1;
+       		    }
+       		    else {
+       			 String taskName1 = t1.getName().toUpperCase();
+			 String taskName2 = t2.getName().toUpperCase();
+			 return taskName1.compareTo(taskName2);
+       		    }
+      		}
+	    };
+	}
+ /**
 	A new Comparator that allows two strings to be compared by date
 	*/
 	static Comparator<Task> compareByDate()
 	{
-		return new Comparator<Task>()
-		{
-
-			public int compare(Task t1, Task t2)
-			{   
-			    if (t1.getDueDate().equals("")) {
-				return 1;
-			    }
-			    else if (t2.getDueDate().equals("")) {
-				return -1;
-			    }
-			    else {
-				Calendar date1 = t1.getCalendarForm();
-				Calendar date2 = t2.getCalendarForm();
-
-				return date1.compareTo(date2);
-			    }
-			}
-
-		};
+	    return new Comparator<Task>(){
+       		public int compare(Task t1, Task t2)
+       		{   
+      		    if (t1.getDueDate().equals("")) {
+       			return 1;
+       		    }
+       		    else if (t2.getDueDate().equals("")) {
+       			return -1;
+       		    }
+       		    else {
+       			Calendar date1 = t1.getCalendarForm();
+       			Calendar date2 = t2.getCalendarForm();
+       			return date1.compareTo(date2);
+       		    }
+      		}
+	    };
 	}
-
-
 }
 
 
