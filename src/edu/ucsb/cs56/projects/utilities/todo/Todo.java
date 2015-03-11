@@ -350,17 +350,19 @@ public class Todo implements Serializable {
     public class deleteCompleted implements ActionListener{
 	public void actionPerformed(ActionEvent ev){
 	    if(sorted==true){
-		for(int i = 0; i<taskList.getSortedTasks().size();i++){
+       		for(int i = 0; i<taskList.getSortedTasks().size();i++){
 		    if(taskList.getSortedTasks().get(i).getCheck().isSelected()==true){
 			taskList.getTasks().remove(taskList.getSortedTasks().get(i));
 			taskList.getSortedTasks().remove(taskList.getSortedTasks().get(i));
+			i = 0;
 		    }
 		}
 	    }
 	    else{
-		for(int i = 0; i<taskList.getTasks().size();i++){
+		for(int i = 0; i< taskList.getTasks().size();i++){
 		    if(taskList.getTasks().get(i).getCheck().isSelected()==true){
 			taskList.getTasks().remove(taskList.getTasks().get(i));
+			i = 0;
 		    }
 		}
 	    }
