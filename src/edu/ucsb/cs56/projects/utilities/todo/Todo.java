@@ -378,25 +378,48 @@ public class Todo implements Serializable {
 	}
 	public void actionPerformed(ActionEvent ev){
 	    int i;
-	    for(i = 0; i<taskList.getTasks().size(); i++){
-		if(taskList.getTasks().get(i)==this.myTask)
-		    break;
+	    if(sorted==true){
+		for(i = 0; i<taskList.getSortedTasks().size(); i++){
+		    if(taskList.getSortedTasks().get(i)==this.myTask)
+			break;
+		}
+		if(i<taskList.getSortedTasks().size()){
+		    Task newTask = taskList.makeTask(this.myTask.getUserInput().getText());
+		    taskList.getSortedTasks().set(i, newTask);;
+		    JCheckBox checkTemp = new JCheckBox();
+		    JButton buttonTemp = new JButton("Delete");
+		    buttonTemp.addActionListener(new DeleteListener(newTask));
+		    JButton editTemp = new JButton("Edit");
+		    editTemp.addActionListener(new EditListener(newTask));
+		    newTask.setEdit(editTemp);
+		    newTask.setCheck(checkTemp);
+		    newTask.setDelete(buttonTemp);
+		    mainPanel.removeAll();
+		    mainPanel.repaint();
+		    displayTasks();
+		}
 	    }
-	    taskList.getTasks().remove(myTask);
-	    taskList.getTasks().add(i, taskList.makeTask(this.myTask.getUserInput().getText()));
-	    taskList.getSortedTasks().remove(myTask);
-	    taskList.getSortedTasks().add(i, taskList.makeTask(this.myTask.getUserInput().getText()));
-	    JCheckBox checkTemp = new JCheckBox();
-	    JButton buttonTemp = new JButton("Delete");
-	    buttonTemp.addActionListener(new DeleteListener(taskList.getTasks().get(i)));
-	    JButton editTemp = new JButton("Edit");
-	    editTemp.addActionListener(new EditListener(taskList.getTasks().get(i)));
-	    taskList.getTasks().get(i).setEdit(editTemp);
-	    taskList.getTasks().get(i).setCheck(checkTemp);
-	    taskList.getTasks().get(i).setDelete(buttonTemp);
-	    mainPanel.removeAll();
-	    mainPanel.repaint();
-	    displayTasks();
+	    else{
+		for(i = 0; i<taskList.getTasks().size(); i++){
+		    if(taskList.getTasks().get(i)==this.myTask)
+			break;
+		}
+		if(i<taskList.getTasks().size()){
+		    Task newTask = taskList.makeTask(this.myTask.getUserInput().getText());
+		    taskList.getTasks().set(i, newTask);;
+		    JCheckBox checkTemp = new JCheckBox();
+		    JButton buttonTemp = new JButton("Delete");
+		    buttonTemp.addActionListener(new DeleteListener(newTask));
+		    JButton editTemp = new JButton("Edit");
+		    editTemp.addActionListener(new EditListener(newTask));
+		    newTask.setEdit(editTemp);
+		    newTask.setCheck(checkTemp);
+		    newTask.setDelete(buttonTemp);
+		    mainPanel.removeAll();
+		    mainPanel.repaint();
+		    displayTasks();
+		}
+	    }
 	}
     }
 }
