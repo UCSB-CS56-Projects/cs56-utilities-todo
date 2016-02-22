@@ -24,7 +24,7 @@ import java.awt.event.*;
    @version todo project for CS56 S13
 */
 public class Todo implements Serializable {
-
+    private javax.swing.Timer timer = new javax.swing.Timer(5000,new refreshListener());
     private JFrame frame;
     private TodoList taskList;
     private JPanel mainPanel;
@@ -115,7 +115,7 @@ public class Todo implements Serializable {
 	
 	//displays the mainPanel components
         this.displayTasks();
-					    
+
        	JButton sortNameButton = new JButton("SORT BY NAME");
        	JButton sortCompletionButton = new JButton("SORT BY COMPLETION");
        	JButton sortDateButton = new JButton("SORT BY DATE");
@@ -151,8 +151,9 @@ public class Todo implements Serializable {
 	addPanel.add(new JLabel("(Taskname MM/DD/YY HH:TT)"));
 	addButton.addActionListener(new AddListener());
 	frame.setSize(600,800);
-	frame.setVisible(true);	
-
+	frame.setVisible(true);
+	
+	timer.start();
     }
 
     //load from file
@@ -173,6 +174,14 @@ public class Todo implements Serializable {
 	}
     }
 
+    public class refreshListener implements ActionListener {
+	public void actionPerformed(ActionEvent ev) {
+	    mainPanel.removeAll();
+	    mainPanel.repaint();
+	    displayTasks();
+	}
+    }
+
     public class sortNameListener implements ActionListener {
 	public void actionPerformed(ActionEvent ev) {
 	    sorted = true;
@@ -190,6 +199,7 @@ public class Todo implements Serializable {
 	    taskList.getSortedTasks().clear();
 	    taskList.updateSortedList(taskList.getTasks(), taskList.getSortedTasks());
 	    Collections.sort(taskList.getSortedTasks(), taskList.compareByCompleted());
+	    
 	    mainPanel.removeAll();
 	    mainPanel.repaint();
 	    displayTasks();
@@ -249,11 +259,13 @@ public class Todo implements Serializable {
 	private Task myTask;
 	public EditListener(Task myTask){
 	    this.myTask = myTask;
+	    timer.start();
 	}
 	public void actionPerformed(ActionEvent ev) {
 	    mainPanel.removeAll();
 	    mainPanel.repaint();
 	    displayTasks(myTask);
+	    timer.stop();
 	}
     }
 
@@ -371,7 +383,8 @@ public class Todo implements Serializable {
 	    displayTasks();
 	}
     }
-    class enterListener implements ActionListener{
+
+    public class enterListener implements ActionListener{
 	private Task myTask;
 	public enterListener(Task myTask){
 	    this.myTask = myTask;

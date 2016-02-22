@@ -21,6 +21,7 @@ public class Task implements Serializable {
 	private String taskName;
 	private Calendar dueDate;
 	private boolean completed;
+    private boolean overdue;
 	private ArrayList<Task> subtasks = new ArrayList<Task>();
 	private Task parentTask;
         private JCheckBox check;
@@ -42,8 +43,9 @@ public class Task implements Serializable {
 	{
 		this.taskName = taskName;
 		//if no date and time
-		if (day == -1 && hour == -1)
-		this.dueDate = null;
+		if (day == -1 && hour == -1) {
+		    this.dueDate = null;
+		}
 
 		//if no date//
 		else if (day == -1){
@@ -59,6 +61,7 @@ public class Task implements Serializable {
 		else
 		    {this.dueDate = new GregorianCalendar(year, month, day, hour, min);}
 		this.completed = false;
+		this.overdue = false;
 		this.parentTask = parentTask;
 	}
 	
@@ -120,6 +123,26 @@ public class Task implements Serializable {
 		return this.completed;
 	}
 
+
+        /**
+	Returns the overdue status of a particular task
+	*/
+    public boolean isOverdue()
+    {
+
+	if(this.dueDate != null) {
+	    Calendar now = new GregorianCalendar();
+	    int result = this.dueDate.compareTo(now);
+	    if(result < 0) {
+		this.overdue = true;
+	    } else {
+		this.overdue = false;
+	    }
+	}
+	
+	return this.overdue;
+    }
+    
 	/**
 	Returns the ArrayList of subtasks for a given task
 	*/
@@ -166,6 +189,10 @@ public class Task implements Serializable {
 	    taskInfo = taskInfo.substring(3);
         }
 	this.label = new JLabel(taskInfo);
+	if(this.isOverdue() == true) {
+	    this.label.setBackground(Color.RED);
+	    this.label.setOpaque(true);
+	}
 	this.label.setPreferredSize(new Dimension(400,20));
     }
     public JLabel getLabel(){
