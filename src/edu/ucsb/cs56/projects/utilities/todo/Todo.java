@@ -30,6 +30,10 @@ public class Todo implements Serializable {
     private JPanel mainPanel;
     private JTextField addField;
     private boolean sorted;
+    private ButtonGroup cbg;
+    private JCheckBox one;
+    private JCheckBox two;
+    private JCheckBox three;
 
     /**
        The main method
@@ -127,6 +131,18 @@ public class Todo implements Serializable {
 	deleteCompletedButton.addActionListener(new deleteCompleted());
 
         addField = new JTextField("", 20);
+	Box cbb = Box.createHorizontalBox();
+	one = new JCheckBox("!");
+	two = new JCheckBox("!!");
+	three = new JCheckBox("!!!");
+	cbg = new ButtonGroup();
+	cbb.add(one);
+	cbb.add(two);
+	cbb.add(three);
+	cbg.add(one);
+	cbg.add(two);
+	cbg.add(three);
+	cbb.setBorder(BorderFactory.createTitledBorder("Priority"));
 	JButton addButton = new JButton("ADD TASK");
 	
 	JMenuBar menuBar = new JMenuBar();
@@ -147,10 +163,11 @@ public class Todo implements Serializable {
 	sortPanel.add(sortCompletionButton);
         sortPanel.add(deleteCompletedButton);
 	addPanel.add(addField);
+	addPanel.add(cbb);
         addPanel.add(addButton);
 	addPanel.add(new JLabel("(Taskname MM/DD/YY HH:TT)"));
 	addButton.addActionListener(new AddListener());
-	frame.setSize(600,800);
+	frame.pack();
 	frame.setVisible(true);
 	
 	timer.start();
@@ -237,7 +254,16 @@ public class Todo implements Serializable {
 	public void actionPerformed(ActionEvent ev) {
 	    sorted = false;
 	    taskList.updateSortedList(taskList.getSortedTasks(), taskList.getTasks());
-	    taskList.addTask(taskList.makeTask(addField.getText()));
+	    if(one.isSelected() == true) {
+		taskList.addTask(taskList.makeTask(addField.getText(),1));
+	    } else if(two.isSelected() == true) {
+		taskList.addTask(taskList.makeTask(addField.getText(),2));
+	    } else if(three.isSelected() == true) {
+		taskList.addTask(taskList.makeTask(addField.getText(),3));
+	    } else {
+		taskList.addTask(taskList.makeTask(addField.getText(),0));
+	    }
+	    
 	    //add new checkbox and buttons
 	    JCheckBox checkTemp = new JCheckBox();
 	    JButton buttonTemp = new JButton("Delete");
@@ -252,6 +278,7 @@ public class Todo implements Serializable {
 	    mainPanel.removeAll();
 	    mainPanel.repaint();
 	    displayTasks();
+	    cbg.clearSelection();
 	}
     }
 
@@ -397,8 +424,8 @@ public class Todo implements Serializable {
 			break;
 		}
 		if(i<taskList.getSortedTasks().size()){
-		    Task newTask = taskList.makeTask(this.myTask.getUserInput().getText());
-		    taskList.getSortedTasks().set(i, newTask);;
+		    Task newTask = taskList.makeTask(this.myTask.getUserInput().getText(), taskList.getSortedTasks().get(i).getPriority());
+		    taskList.getSortedTasks().set(i, newTask);
 		    JCheckBox checkTemp = new JCheckBox();
 		    JButton buttonTemp = new JButton("Delete");
 		    buttonTemp.addActionListener(new DeleteListener(newTask));
@@ -418,8 +445,8 @@ public class Todo implements Serializable {
 			break;
 		}
 		if(i<taskList.getTasks().size()){
-		    Task newTask = taskList.makeTask(this.myTask.getUserInput().getText());
-		    taskList.getTasks().set(i, newTask);;
+		    Task newTask = taskList.makeTask(this.myTask.getUserInput().getText(),taskList.getTasks().get(i).getPriority());
+		    taskList.getTasks().set(i, newTask);
 		    JCheckBox checkTemp = new JCheckBox();
 		    JButton buttonTemp = new JButton("Delete");
 		    buttonTemp.addActionListener(new DeleteListener(newTask));

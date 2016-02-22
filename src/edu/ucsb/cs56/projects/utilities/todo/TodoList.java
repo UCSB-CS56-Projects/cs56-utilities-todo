@@ -46,7 +46,7 @@ public class TodoList implements Serializable {
 	@param quickInput the computer asks for input from the user to add a task
 	@return Task that was just created
 	*/
-    public Task makeTask(String quickInput)
+    public Task makeTask(String quickInput, int priorityNumber)
 	{
       		String taskName = "";
 		String date = "";
@@ -56,6 +56,7 @@ public class TodoList implements Serializable {
 		int month = -1;
 		int day = -1;
 		int year = -1;
+		
 		String[] taskParts = quickInput.split(" ");
 
 	        boolean isTaskName = true;
@@ -126,7 +127,7 @@ public class TodoList implements Serializable {
 
 			if (parentTask != null)
 			{
-				Task newTask = new Task(taskName, year, month, day, hour, min, parentTask);
+			    Task newTask = new Task(taskName, year, month, day, hour, min, parentTask,priorityNumber);
 				parentTask.getSubTasksList().add(parentTask.getSubTasksList().size(), newTask);
 				return newTask;
 			}
@@ -135,12 +136,14 @@ public class TodoList implements Serializable {
 		}
 		else
 		    {
-			    Task newTask = new Task(taskName, year, month, day, hour, min, null);
+			Task newTask = new Task(taskName, year, month, day, hour, min, null, priorityNumber);
 			       	return newTask;
 		    }
 		return null;
 	
 	}
+
+    
     /**
        Adds a new task to the list
        @param newTask the task to be added
