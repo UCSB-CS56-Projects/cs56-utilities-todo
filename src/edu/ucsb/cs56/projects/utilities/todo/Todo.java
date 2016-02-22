@@ -24,7 +24,7 @@ import java.awt.event.*;
    @version todo project for CS56 S13
 */
 public class Todo implements Serializable {
-    private javax.swing.Timer timer = new javax.swing.Timer(5000,new refreshListener());
+    private javax.swing.Timer timer = new javax.swing.Timer(5000,new refreshListener()); // Timer to refresh task list
     private JFrame frame;
     private TodoList taskList;
     private JPanel mainPanel;
