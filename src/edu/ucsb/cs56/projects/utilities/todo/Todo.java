@@ -30,6 +30,7 @@ public class Todo implements Serializable {
     private JPanel mainPanel;
     private JTextField addField;
     private boolean sorted;
+    private boolean hidden;
     private ButtonGroup cbg;
     private JCheckBox one;
     private JCheckBox two;
@@ -57,8 +58,9 @@ public class Todo implements Serializable {
 	taskList = new TodoList();
 	mainPanel = new JPanel();
 	sorted = false;
+	hidden = false;
 	
-	JPanel sortPanel = new JPanel();
+	JPanel midPanel = new JPanel(new GridLayout(2,0));
 	JPanel addPanel = new JPanel();
 	mainPanel.setPreferredSize(new Dimension(550, 600));
 	//exit
@@ -118,6 +120,7 @@ public class Todo implements Serializable {
 	    buttonTemp.addActionListener(new DeleteListener(taskList.getTasks().get(i)));
 	    editTemp.addActionListener(new EditListener(taskList.getTasks().get(i)));
 	    
+
 	    taskList.getTasks().get(i).setEdit(editTemp);
 	    taskList.getTasks().get(i).setCheck(checkTemp);
 	    taskList.getTasks().get(i).setDelete(buttonTemp);
@@ -130,13 +133,15 @@ public class Todo implements Serializable {
        	JButton sortNameButton = new JButton("SORT BY NAME");
        	JButton sortCompletionButton = new JButton("SORT BY COMPLETION");
        	JButton sortDateButton = new JButton("SORT BY DATE");
+	JButton toggleCompletedButton = new JButton("SHOW/HIDE COMPLETED");
 	JButton deleteCompletedButton = new JButton("DELETE COMPLETED");
 
 	sortPriorityButton.addActionListener(new sortPriorityListener());
        	sortNameButton.addActionListener(new sortNameListener());
        	sortCompletionButton.addActionListener(new sortCompletionListener());
        	sortDateButton.addActionListener(new sortDateListener());
-	deleteCompletedButton.addActionListener(new deleteCompleted());
+	toggleCompletedButton.addActionListener(new toggleCompletedListener());
+	deleteCompletedButton.addActionListener(new deleteCompletedListener());
 
         addField = new JTextField("", 20);
 	
@@ -185,13 +190,20 @@ public class Todo implements Serializable {
 	frame.setJMenuBar(menuBar);
 	frame.getContentPane().add(mainPanel,BorderLayout.NORTH);
 	frame.getContentPane().add(addPanel,BorderLayout.SOUTH);
-	frame.getContentPane().add(sortPanel,BorderLayout.CENTER);
+	frame.getContentPane().add(midPanel,BorderLayout.CENTER);
+
+	JPanel sortPanel = new JPanel();
+	JPanel comPanel = new JPanel();
 	
 	sortPanel.add(sortPriorityButton);
         sortPanel.add(sortNameButton);
         sortPanel.add(sortDateButton);
 	sortPanel.add(sortCompletionButton);
-        sortPanel.add(deleteCompletedButton);
+	comPanel.add(toggleCompletedButton);
+        comPanel.add(deleteCompletedButton);
+
+	midPanel.add(sortPanel);
+	midPanel.add(comPanel);
 	
 	addPanel.add(addField);
 	addPanel.add(cbb);
@@ -199,7 +211,8 @@ public class Todo implements Serializable {
         addPanel.add(addButton);
 	addPanel.add(formatLabel);
 	addButton.addActionListener(new AddListener());
-	
+
+	//frame.setSize(800,800);
 	frame.pack();
 	frame.setVisible(true);
 	
@@ -221,14 +234,6 @@ public class Todo implements Serializable {
 	    } catch (Exception ex) {
 		ex.printStackTrace();
 	    }
-	}
-    }
-
-    public class refreshListener implements ActionListener {
-	public void actionPerformed(ActionEvent ev) {
-	    mainPanel.removeAll();
-	    mainPanel.repaint();
-	    displayTasks();
 	}
     }
 
@@ -281,6 +286,18 @@ public class Todo implements Serializable {
 	}
     }
 
+    public class refreshListener implements ActionListener {
+	public void actionPerformed(ActionEvent ev) {
+	    mainPanel.removeAll();
+	    mainPanel.repaint();
+	    if(hidden == true) {
+		displayComTasks();
+	    } else {
+		displayTasks();
+	    }
+	}
+    }
+    
     public class DeleteListener implements ActionListener {
 	private Task myTask;
 	public DeleteListener(Task myTask){
@@ -292,7 +309,6 @@ public class Todo implements Serializable {
 	    mainPanel.removeAll();
 	    mainPanel.repaint();
 	    displayTasks();
-
 	}
     }
 	    
@@ -362,14 +378,17 @@ public class Todo implements Serializable {
     }
 
     public void displayTasks() {
-	if(sorted==true) {
+	if(sorted == true) {
 	    for(int i=0; i<taskList.getSortedTasks().size(); i++) {
 		JButton buttonTemp = new JButton("Delete");
-		buttonTemp.addActionListener(new DeleteListener(taskList.getSortedTasks().get(i)));
 		JButton editTemp = new JButton("Edit");
+
+		buttonTemp.addActionListener(new DeleteListener(taskList.getSortedTasks().get(i)));
 		editTemp.addActionListener(new EditListener(taskList.getSortedTasks().get(i)));
-		taskList.getSortedTasks().get(i).setEdit(editTemp);
+
 		taskList.getSortedTasks().get(i).setDelete(buttonTemp);
+		taskList.getSortedTasks().get(i).setEdit(editTemp);
+		
 		mainPanel.add(taskList.getSortedTasks().get(i).getCheck());
 		mainPanel.add(taskList.getSortedTasks().get(i).getLabel());
 		mainPanel.add(taskList.getSortedTasks().get(i).getEdit());
@@ -380,11 +399,14 @@ public class Todo implements Serializable {
 	else {
   	    for(int i=0; i<taskList.getTasks().size(); i++) {
 		JButton buttonTemp = new JButton("Delete");
-		buttonTemp.addActionListener(new DeleteListener(taskList.getTasks().get(i)));
 		JButton editTemp = new JButton("Edit");
+		
+		buttonTemp.addActionListener(new DeleteListener(taskList.getTasks().get(i)));
 		editTemp.addActionListener(new EditListener(taskList.getTasks().get(i)));
-		taskList.getTasks().get(i).setEdit(editTemp);
+
 		taskList.getTasks().get(i).setDelete(buttonTemp);
+		taskList.getTasks().get(i).setEdit(editTemp);
+		
 		mainPanel.add(taskList.getTasks().get(i).getCheck());
 		mainPanel.add(taskList.getTasks().get(i).getLabel());
 		mainPanel.add(taskList.getTasks().get(i).getEdit());
@@ -393,6 +415,50 @@ public class Todo implements Serializable {
 	mainPanel.validate();
 	}
     }
+
+    public void displayComTasks() {
+	if(sorted == true) {
+	    for(int i = 0; i < taskList.getSortedTasks().size(); i++) {
+		if(taskList.getSortedTasks().get(i).getCheck().isSelected() == false) {
+		    JButton buttonTemp = new JButton("Delete");
+		    JButton editTemp = new JButton("Edit");
+		    
+		    buttonTemp.addActionListener(new DeleteListener(taskList.getSortedTasks().get(i)));
+		    editTemp.addActionListener(new EditListener(taskList.getSortedTasks().get(i)));
+
+		    taskList.getSortedTasks().get(i).setDelete(buttonTemp);
+		    taskList.getSortedTasks().get(i).setEdit(editTemp);
+		    
+		    mainPanel.add(taskList.getSortedTasks().get(i).getCheck());
+		    mainPanel.add(taskList.getSortedTasks().get(i).getLabel());
+		    mainPanel.add(taskList.getSortedTasks().get(i).getEdit());
+		    mainPanel.add(taskList.getSortedTasks().get(i).getDelete());
+		}
+	    }
+	    mainPanel.validate();
+	} else {
+	    for(int i = 0; i < taskList.getTasks().size(); i++) {
+		if(taskList.getTasks().get(i).getCheck().isSelected() == false) {
+		    JButton buttonTemp = new JButton("Delete");
+		    JButton editTemp = new JButton("Edit");
+		    
+		    buttonTemp.addActionListener(new DeleteListener(taskList.getTasks().get(i)));
+		    editTemp.addActionListener(new EditListener(taskList.getTasks().get(i)));
+
+		    taskList.getTasks().get(i).setDelete(buttonTemp);
+		    taskList.getTasks().get(i).setEdit(editTemp);
+		    
+		    mainPanel.add(taskList.getTasks().get(i).getCheck());
+		    mainPanel.add(taskList.getTasks().get(i).getLabel());
+		    mainPanel.add(taskList.getTasks().get(i).getEdit());
+		    mainPanel.add(taskList.getTasks().get(i).getDelete());
+		}
+	    }
+	    mainPanel.validate();
+	}
+    }
+	    
+    
     public void displayTasks(Task myTask) {
 	if(sorted) {
 	    for(int i=0; i<taskList.getSortedTasks().size(); i++) {
@@ -439,7 +505,26 @@ public class Todo implements Serializable {
 	    mainPanel.validate();
 	}
     }
-    public class deleteCompleted implements ActionListener{
+
+    public class toggleCompletedListener implements ActionListener {
+	public void actionPerformed(ActionEvent ev) {
+	    if(hidden == true) {
+		mainPanel.removeAll();
+		mainPanel.repaint();
+		displayTasks();
+		hidden = false;
+		timer.stop();
+	    } else {
+		mainPanel.removeAll();
+		mainPanel.repaint();
+		displayComTasks();
+		hidden = true;
+		timer.start();
+	    }
+	}
+    }
+    
+    public class deleteCompletedListener implements ActionListener{
 	public void actionPerformed(ActionEvent ev){
 	    if(sorted==true){
        		for(int i = 0; i<taskList.getSortedTasks().size();i++){

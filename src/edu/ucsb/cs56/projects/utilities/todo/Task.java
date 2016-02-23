@@ -231,7 +231,7 @@ public class Task implements Serializable {
 	    this.label.setOpaque(true);
 	}
 	this.label.setForeground(this.getColor());
-	this.label.setPreferredSize(new Dimension(400,20));
+	this.label.setPreferredSize(new Dimension(350,20));
     }
     
     public JLabel getLabel(){
