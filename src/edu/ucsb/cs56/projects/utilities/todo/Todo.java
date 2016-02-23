@@ -27,7 +27,9 @@ public class Todo implements Serializable {
     private javax.swing.Timer timer = new javax.swing.Timer(5000,new refreshListener()); // Timer to refresh task list
     private JFrame frame;
     private TodoList taskList;
+    private JPanel taskPanel;
     private JPanel mainPanel;
+    private Box taskBox;
     private JTextField addField;
     private boolean sorted;
     private boolean hidden;
@@ -49,6 +51,7 @@ public class Todo implements Serializable {
        	Scanner scanner = new Scanner(System.in);  
        	Todo todo = new Todo();
 	todo.go();
+	
     } //main method
 
     public void go() {
@@ -56,13 +59,26 @@ public class Todo implements Serializable {
 	frame = new JFrame("Todo List");
 	frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);	
 	taskList = new TodoList();
-	mainPanel = new JPanel();
+
+	taskPanel = new JPanel();
+
+	taskBox = Box.createVerticalBox();
+	taskBox.setBorder(BorderFactory.createTitledBorder("Tasks"));
+	taskBox.setSize(625,600);
+
+	mainPanel = new JPanel();	
+
+	taskBox.add(mainPanel);
+
 	sorted = false;
 	hidden = false;
 	
 	JPanel midPanel = new JPanel(new GridLayout(2,0));
 	JPanel addPanel = new JPanel();
-	mainPanel.setPreferredSize(new Dimension(550, 600));
+
+	mainPanel.setPreferredSize(new Dimension(550,575));
+	taskPanel.setPreferredSize(new Dimension(675,700));
+	taskPanel.add(taskBox);
 	//exit
 	frame.addWindowListener(new WindowAdapter()
 	    {
@@ -126,7 +142,7 @@ public class Todo implements Serializable {
 	    taskList.getTasks().get(i).setDelete(buttonTemp);
 	}
 	
-	//displays the mainPanel components
+	//displays the taskPanel components
         this.displayTasks();
 
 	JButton sortPriorityButton = new JButton("SORT BY PRIORITY");
@@ -188,9 +204,9 @@ public class Todo implements Serializable {
 	menuBar.add(fileMenu);
 	
 	frame.setJMenuBar(menuBar);
-	frame.getContentPane().add(mainPanel,BorderLayout.NORTH);
+	frame.getContentPane().add(taskPanel,BorderLayout.CENTER);
 	frame.getContentPane().add(addPanel,BorderLayout.SOUTH);
-	frame.getContentPane().add(midPanel,BorderLayout.CENTER);
+	frame.getContentPane().add(midPanel,BorderLayout.NORTH);
 
 	JPanel sortPanel = new JPanel();
 	JPanel comPanel = new JPanel();
@@ -245,7 +261,11 @@ public class Todo implements Serializable {
 	    Collections.sort(taskList.getSortedTasks(), taskList.compareByPriority());
 	    mainPanel.removeAll();
 	    mainPanel.repaint();
-	    displayTasks();
+	    if(hidden == true) {
+		displayComTasks();
+	    } else {
+		displayTasks();
+	    }
 	}
     }
 	    
@@ -258,7 +278,11 @@ public class Todo implements Serializable {
 	    Collections.sort(taskList.getSortedTasks(), taskList.compareByName());
 	    mainPanel.removeAll();
 	    mainPanel.repaint();
-	    displayTasks();
+	    if(hidden == true) {
+		displayComTasks();
+	    } else {
+		displayTasks();
+	    }
 	}
     }
     public class sortCompletionListener implements ActionListener {
@@ -270,7 +294,11 @@ public class Todo implements Serializable {
 	    
 	    mainPanel.removeAll();
 	    mainPanel.repaint();
-	    displayTasks();
+	    if(hidden == true) {
+		displayComTasks();
+	    } else {
+		displayTasks();
+	    }
 	}
 
     }
@@ -282,7 +310,11 @@ public class Todo implements Serializable {
 	    Collections.sort(taskList.getSortedTasks(), taskList.compareByDate());
 	    mainPanel.removeAll();
 	    mainPanel.repaint();
-	    displayTasks();
+	    if(hidden == true) {
+		displayComTasks();
+	    } else {
+		displayTasks();
+	    }
 	}
     }
 
@@ -308,7 +340,11 @@ public class Todo implements Serializable {
 	    taskList.getSortedTasks().remove(this.myTask);
 	    mainPanel.removeAll();
 	    mainPanel.repaint();
-	    displayTasks();
+	    if(hidden == true) {
+		displayComTasks();
+	    } else {
+		displayTasks();
+	    }
 	}
     }
 	    
@@ -319,7 +355,7 @@ public class Todo implements Serializable {
 	    int greenInt = (Integer) green.getValue();
 	    int blueInt = (Integer) blue.getValue();
 	    Color c = new Color(redInt, greenInt, blueInt);
-	    taskList.updateSortedList(taskList.getSortedTasks(), taskList.getTasks());
+	    //taskList.updateSortedList(taskList.getSortedTasks(), taskList.getTasks());
 	    if(one.isSelected() == true) {
 		taskList.addTask(taskList.makeTask(addField.getText(),1,c));
 	    } else if(two.isSelected() == true) {
@@ -343,7 +379,13 @@ public class Todo implements Serializable {
 	    addField.setText("");
 	    mainPanel.removeAll();
 	    mainPanel.repaint();
-	    displayTasks();
+
+	    if(hidden == true) {
+		displayComTasks();
+	    } else {
+		displayTasks();
+	    }
+	    
 	    cbg.clearSelection();
 	    red.setValue(0);
 	    green.setValue(0);
@@ -428,7 +470,7 @@ public class Todo implements Serializable {
 
 		    taskList.getSortedTasks().get(i).setDelete(buttonTemp);
 		    taskList.getSortedTasks().get(i).setEdit(editTemp);
-		    
+
 		    mainPanel.add(taskList.getSortedTasks().get(i).getCheck());
 		    mainPanel.add(taskList.getSortedTasks().get(i).getLabel());
 		    mainPanel.add(taskList.getSortedTasks().get(i).getEdit());
@@ -465,7 +507,7 @@ public class Todo implements Serializable {
 		Task thisTask = taskList.getSortedTasks().get(i);
 		if(thisTask==myTask){
 		    mainPanel.add(thisTask.getCheck());
-		    JTextField input = new JTextField(thisTask.getName(),35);
+		    JTextField input = new JTextField(thisTask.getName(),25);
 		    thisTask.setUserInput(input);
 		    mainPanel.add(thisTask.getUserInput());
 		    JButton enterButton = new JButton("Enter");
@@ -487,7 +529,7 @@ public class Todo implements Serializable {
 		Task thisTask = taskList.getTasks().get(i);
 		if(thisTask==myTask){
 		    mainPanel.add(thisTask.getCheck());
-		    JTextField input = new JTextField(thisTask.getName(),35);
+		    JTextField input = new JTextField(thisTask.getName(),25);
 		    thisTask.setUserInput(input);
 		    mainPanel.add(thisTask.getUserInput());
 		    JButton enterButton = new JButton("Enter");
