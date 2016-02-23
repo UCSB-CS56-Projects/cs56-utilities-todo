@@ -107,11 +107,14 @@ public class Todo implements Serializable {
 	    else {
 		taskInfo = taskInfo.substring(3);
 	    }
+
 	    JCheckBox checkTemp = new JCheckBox();
 	    JButton buttonTemp = new JButton("Delete");
-	    buttonTemp.addActionListener(new DeleteListener(taskList.getTasks().get(i)));
 	    JButton editTemp = new JButton("Edit");
+
+	    buttonTemp.addActionListener(new DeleteListener(taskList.getTasks().get(i)));
 	    editTemp.addActionListener(new EditListener(taskList.getTasks().get(i)));
+	    
 	    taskList.getTasks().get(i).setEdit(editTemp);
 	    taskList.getTasks().get(i).setCheck(checkTemp);
 	    taskList.getTasks().get(i).setDelete(buttonTemp);
@@ -120,11 +123,13 @@ public class Todo implements Serializable {
 	//displays the mainPanel components
         this.displayTasks();
 
+	JButton sortPriorityButton = new JButton("SORT BY PRIORITY");
        	JButton sortNameButton = new JButton("SORT BY NAME");
        	JButton sortCompletionButton = new JButton("SORT BY COMPLETION");
        	JButton sortDateButton = new JButton("SORT BY DATE");
 	JButton deleteCompletedButton = new JButton("DELETE COMPLETED");
 
+	sortPriorityButton.addActionListener(new sortPriorityListener());
        	sortNameButton.addActionListener(new sortNameListener());
        	sortCompletionButton.addActionListener(new sortCompletionListener());
        	sortDateButton.addActionListener(new sortDateListener());
@@ -143,30 +148,40 @@ public class Todo implements Serializable {
 	cbg.add(two);
 	cbg.add(three);
 	cbb.setBorder(BorderFactory.createTitledBorder("Priority"));
+
+	JLabel formatLabel = new JLabel("(Taskname MM/DD/YY HH:TT)");
+	formatLabel.setFont(new Font("Serif", Font.PLAIN, 11));
 	JButton addButton = new JButton("ADD TASK");
 	
 	JMenuBar menuBar = new JMenuBar();
 	JMenu fileMenu = new JMenu("File");
 	JMenuItem loadMenuItem = new JMenuItem("Load");
 	JMenuItem saveMenuItem = new JMenuItem("Save");
+	
 	loadMenuItem.addActionListener(new LoadListener());
 	saveMenuItem.addActionListener(new SaveListener());
 	fileMenu.add(loadMenuItem);
 	fileMenu.add(saveMenuItem);
+	
 	menuBar.add(fileMenu);
+	
 	frame.setJMenuBar(menuBar);
-	frame.getContentPane().add(BorderLayout.NORTH, mainPanel);
-	frame.getContentPane().add(BorderLayout.SOUTH, addPanel);
-	frame.getContentPane().add(BorderLayout.CENTER, sortPanel);
+	frame.getContentPane().add(mainPanel,BorderLayout.NORTH);
+	frame.getContentPane().add(addPanel,BorderLayout.SOUTH);
+	frame.getContentPane().add(sortPanel,BorderLayout.CENTER);
+	
+	sortPanel.add(sortPriorityButton);
         sortPanel.add(sortNameButton);
         sortPanel.add(sortDateButton);
 	sortPanel.add(sortCompletionButton);
         sortPanel.add(deleteCompletedButton);
+	
 	addPanel.add(addField);
 	addPanel.add(cbb);
         addPanel.add(addButton);
-	addPanel.add(new JLabel("(Taskname MM/DD/YY HH:TT)"));
+	addPanel.add(formatLabel);
 	addButton.addActionListener(new AddListener());
+	
 	frame.pack();
 	frame.setVisible(true);
 	
@@ -198,6 +213,19 @@ public class Todo implements Serializable {
 	    displayTasks();
 	}
     }
+
+    public class sortPriorityListener implements ActionListener {
+	public void actionPerformed(ActionEvent ev) {
+	    sorted = true;
+	    taskList.getSortedTasks().clear();
+	    taskList.updateSortedList(taskList.getTasks(), taskList.getSortedTasks());
+	    Collections.sort(taskList.getSortedTasks(), taskList.compareByPriority());
+	    mainPanel.removeAll();
+	    mainPanel.repaint();
+	    displayTasks();
+	}
+    }
+	    
 
     public class sortNameListener implements ActionListener {
 	public void actionPerformed(ActionEvent ev) {
