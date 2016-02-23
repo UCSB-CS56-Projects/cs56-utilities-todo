@@ -21,6 +21,7 @@ public class Task implements Serializable {
     private String taskName;
     private Calendar dueDate;
     private int priority;
+    private Color color;
     private boolean completed;
     private boolean overdue;
     private ArrayList<Task> subtasks = new ArrayList<Task>();
@@ -40,7 +41,7 @@ public class Task implements Serializable {
        @param hour the hour in which the due date is
        @param min the minute at which the due date is
     */
-    public Task(String taskName, int year, int month, int day, int hour, int min, Task parentTask, int priorityInteger)
+    public Task(String taskName, int year, int month, int day, int hour, int min, Task parentTask, int priorityInteger, Color newColor)
     {
 	this.taskName = taskName;
 	//if no date and time
@@ -62,6 +63,7 @@ public class Task implements Serializable {
 	else
 	    {this.dueDate = new GregorianCalendar(year, month, day, hour, min);}
 	this.priority = priorityInteger;
+	this.color = newColor;
 	this.completed = false;
 	this.overdue = false;
 	this.parentTask = parentTask;
@@ -132,7 +134,11 @@ public class Task implements Serializable {
     }
 
     /**
-       Sets the priority 
+       Gets the color of the task
+    */
+    public Color getColor() {
+	return this.color;
+    }
     
     /**
        Marks a task as completed
@@ -224,6 +230,7 @@ public class Task implements Serializable {
 	    this.label.setBackground(Color.RED);
 	    this.label.setOpaque(true);
 	}
+	this.label.setForeground(this.getColor());
 	this.label.setPreferredSize(new Dimension(400,20));
     }
     

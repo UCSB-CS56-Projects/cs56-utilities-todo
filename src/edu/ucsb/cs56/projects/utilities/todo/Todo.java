@@ -34,6 +34,9 @@ public class Todo implements Serializable {
     private JCheckBox one;
     private JCheckBox two;
     private JCheckBox three;
+    private SpinnerNumberModel red;
+    private SpinnerNumberModel green;
+    private SpinnerNumberModel blue;
 
     /**
        The main method
@@ -136,6 +139,7 @@ public class Todo implements Serializable {
 	deleteCompletedButton.addActionListener(new deleteCompleted());
 
         addField = new JTextField("", 20);
+	
 	Box cbb = Box.createHorizontalBox();
 	one = new JCheckBox("!");
 	two = new JCheckBox("!!");
@@ -148,6 +152,19 @@ public class Todo implements Serializable {
 	cbg.add(two);
 	cbg.add(three);
 	cbb.setBorder(BorderFactory.createTitledBorder("Priority"));
+
+	red = new SpinnerNumberModel(0,0,255,1);
+	green = new SpinnerNumberModel(0,0,255,1);
+	blue = new SpinnerNumberModel(0,0,255,1);
+	JSpinner spin1 = new JSpinner(red);
+	JSpinner spin2 = new JSpinner(green);
+	JSpinner spin3 = new JSpinner(blue);
+	Box colorBox = Box.createHorizontalBox();
+	colorBox.add(spin1);
+	colorBox.add(spin2);
+	colorBox.add(spin3);
+	colorBox.setBorder(BorderFactory.createTitledBorder("Color (RGB)"));
+	
 
 	JLabel formatLabel = new JLabel("(Taskname MM/DD/YY HH:TT)");
 	formatLabel.setFont(new Font("Serif", Font.PLAIN, 11));
@@ -178,6 +195,7 @@ public class Todo implements Serializable {
 	
 	addPanel.add(addField);
 	addPanel.add(cbb);
+	addPanel.add(colorBox);
         addPanel.add(addButton);
 	addPanel.add(formatLabel);
 	addButton.addActionListener(new AddListener());
@@ -281,15 +299,19 @@ public class Todo implements Serializable {
     public class AddListener implements ActionListener {
 	public void actionPerformed(ActionEvent ev) {
 	    sorted = false;
+	    int redInt = (Integer) red.getValue();
+	    int greenInt = (Integer) green.getValue();
+	    int blueInt = (Integer) blue.getValue();
+	    Color c = new Color(redInt, greenInt, blueInt);
 	    taskList.updateSortedList(taskList.getSortedTasks(), taskList.getTasks());
 	    if(one.isSelected() == true) {
-		taskList.addTask(taskList.makeTask(addField.getText(),1));
+		taskList.addTask(taskList.makeTask(addField.getText(),1,c));
 	    } else if(two.isSelected() == true) {
-		taskList.addTask(taskList.makeTask(addField.getText(),2));
+		taskList.addTask(taskList.makeTask(addField.getText(),2,c));
 	    } else if(three.isSelected() == true) {
-		taskList.addTask(taskList.makeTask(addField.getText(),3));
+		taskList.addTask(taskList.makeTask(addField.getText(),3,c));
 	    } else {
-		taskList.addTask(taskList.makeTask(addField.getText(),0));
+		taskList.addTask(taskList.makeTask(addField.getText(),0,c));
 	    }
 	    
 	    //add new checkbox and buttons
@@ -307,6 +329,9 @@ public class Todo implements Serializable {
 	    mainPanel.repaint();
 	    displayTasks();
 	    cbg.clearSelection();
+	    red.setValue(0);
+	    green.setValue(0);
+	    blue.setValue(0);
 	}
     }
 
@@ -452,7 +477,9 @@ public class Todo implements Serializable {
 			break;
 		}
 		if(i<taskList.getSortedTasks().size()){
-		    Task newTask = taskList.makeTask(this.myTask.getUserInput().getText(), taskList.getSortedTasks().get(i).getPriority());
+		    Task newTask = taskList.makeTask(this.myTask.getUserInput().getText(),
+						     taskList.getSortedTasks().get(i).getPriority(),
+						     taskList.getSortedTasks().get(i).getColor());
 		    taskList.getSortedTasks().set(i, newTask);
 		    JCheckBox checkTemp = new JCheckBox();
 		    JButton buttonTemp = new JButton("Delete");
@@ -473,7 +500,9 @@ public class Todo implements Serializable {
 			break;
 		}
 		if(i<taskList.getTasks().size()){
-		    Task newTask = taskList.makeTask(this.myTask.getUserInput().getText(),taskList.getTasks().get(i).getPriority());
+		    Task newTask = taskList.makeTask(this.myTask.getUserInput().getText(),
+						     taskList.getTasks().get(i).getPriority(),
+						     taskList.getTasks().get(i).getColor());
 		    taskList.getTasks().set(i, newTask);
 		    JCheckBox checkTemp = new JCheckBox();
 		    JButton buttonTemp = new JButton("Delete");
