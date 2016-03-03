@@ -28,8 +28,11 @@ public class Todo implements Serializable {
     private JFrame frame;
     private TodoList taskList;
     private JPanel taskPanel;
+    private JPanel categoryPanel;
     private JPanel mainPanel;
+    private JPanel leftPanel;
     private Box taskBox;
+    private Box categoryBox;
     private JTextField addField;
     private boolean sorted;
     private boolean hidden;
@@ -60,14 +63,21 @@ public class Todo implements Serializable {
 	frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);	
 	taskList = new TodoList();
 
-	taskPanel = new JPanel();
+	taskPanel = new JPanel(); // Holds Box of Tasks
+	categoryPanel = new JPanel(); // Holds Box of categories
 
-	taskBox = Box.createVerticalBox();
+	categoryBox = Box.createVerticalBox();
+	categoryBox.setBorder(BorderFactory.createTitledBorder("Lists"));
+	categoryBox.setSize(300,600);
+	
+	taskBox = Box.createVerticalBox(); // Contains mainPanel
 	taskBox.setBorder(BorderFactory.createTitledBorder("Tasks"));
-	taskBox.setSize(625,600);
+	taskBox.setSize(600,600);
 
-	mainPanel = new JPanel();	
+	leftPanel = new JPanel(); // Holds all list names
+	mainPanel = new JPanel(); // Holds all the printed tasks
 
+	categoryBox.add(leftPanel);
 	taskBox.add(mainPanel);
 
 	sorted = false;
@@ -76,8 +86,13 @@ public class Todo implements Serializable {
 	JPanel midPanel = new JPanel(new GridLayout(2,0));
 	JPanel addPanel = new JPanel();
 
+	leftPanel.setPreferredSize(new Dimension(250, 575));
 	mainPanel.setPreferredSize(new Dimension(550,575));
-	taskPanel.setPreferredSize(new Dimension(675,700));
+
+	categoryPanel.setPreferredSize(new Dimension(300,700));
+	categoryPanel.add(categoryBox);
+	
+	taskPanel.setPreferredSize(new Dimension(600,700));
 	taskPanel.add(taskBox);
 	//exit
 	frame.addWindowListener(new WindowAdapter()
@@ -204,6 +219,7 @@ public class Todo implements Serializable {
 	menuBar.add(fileMenu);
 	
 	frame.setJMenuBar(menuBar);
+	frame.getContentPane().add(categoryPanel,BorderLayout.WEST);
 	frame.getContentPane().add(taskPanel,BorderLayout.CENTER);
 	frame.getContentPane().add(addPanel,BorderLayout.SOUTH);
 	frame.getContentPane().add(midPanel,BorderLayout.NORTH);
@@ -228,7 +244,6 @@ public class Todo implements Serializable {
 	addPanel.add(formatLabel);
 	addButton.addActionListener(new AddListener());
 
-	//frame.setSize(800,800);
 	frame.pack();
 	frame.setVisible(true);
 	
@@ -507,7 +522,7 @@ public class Todo implements Serializable {
 		Task thisTask = taskList.getSortedTasks().get(i);
 		if(thisTask==myTask){
 		    mainPanel.add(thisTask.getCheck());
-		    JTextField input = new JTextField(thisTask.getName(),25);
+		    JTextField input = new JTextField(thisTask.getName(),30);
 		    thisTask.setUserInput(input);
 		    mainPanel.add(thisTask.getUserInput());
 		    JButton enterButton = new JButton("Enter");
@@ -529,7 +544,7 @@ public class Todo implements Serializable {
 		Task thisTask = taskList.getTasks().get(i);
 		if(thisTask==myTask){
 		    mainPanel.add(thisTask.getCheck());
-		    JTextField input = new JTextField(thisTask.getName(),25);
+		    JTextField input = new JTextField(thisTask.getName(),30);
 		    thisTask.setUserInput(input);
 		    mainPanel.add(thisTask.getUserInput());
 		    JButton enterButton = new JButton("Enter");
