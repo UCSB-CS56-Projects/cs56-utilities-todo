@@ -1,52 +1,112 @@
-package edu.ucsb.cs56.projects.utilties.todo;
+package edu.ucsb.cs56.projects.utilities.todo;
 
-import edu.ucsb.cs56.projects.utilties.todo.Task;
+import edu.ucsb.cs56.projects.utilities.todo.Task;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
-import java.io.Serializable;
+import java.io.Serializable;\
 import java.text.SimpleDateFormat;
 import java.util.GregorianCalendar;
 import java.util.Scanner;
-import java.io.*;
+import javax.io.*;
+import javax.swing.*;
+import java.util.*;
+import java.awt.events.*;
 
 /**
-	A represention of a list of Tasks. Does this by having an Arraylist as a private variable.
+   A single list of tasks in a todo list
 
-	@author Brandon Newman
-	@version todo project for CS56 S13
+   @author William Stevenson
+   @version todo project for CS56 W16
 */
-public class TodoList implements Serializable {
-    
-    private ArrayList<Task> tasks = new ArrayList<Task>();
-    private ArrayList<Task> sortedTasks = new ArrayList<Task>();
-    
+public class List implements Serializable {
+
+    private String listName;
+    private ArrayList<Task> tasks;
+    private ArrayList<Task> sortedTasks;
+    private JCheckbox check;
+    private JButton deleteButton;
+    private JButton editButton;
+    private JLabel label;
+    private JTextField userInput;
+
     /**
-       Getter for ArrayList of level 1 tasks
-       @return and ArrayList of the tasks that the user put in
+       Constructor for a single list of tasks
+       @param listName the name of the new list
+    */
+    public List(String listName)
+    {
+	this.listName = listName;
+	this.tasks = new ArrayList<Task>();
+	this.sortedTasks = new ArrayList<Task>();
+    }
+
+    /**
+       Add task to the ArrayList
+       @param task Task to add
+    */
+    public void addTask(Task task)
+    {
+	this.tasks.add(task);
+    }
+
+    /**
+       Remove task from the ArrayList
+       @param task Task to remove
+    */
+    public void removeTask(Task task)
+    {
+	this.tasks.remove(task);
+    }
+
+    /**
+       Getter for the ArrayList of all tasks
+       @return an ArrayList of the tasks that the user put in
     */
     public ArrayList<Task> getTasks()
     {
 	return this.tasks;
     }
-    
+
     /**
        Getter for the ArrayList of all tasks, sorted
-       @return an ArrayList of the sorted tasks 
+       @return a sorted ArrayList of the tasks that the user put in
     */
     public ArrayList<Task> getSortedTasks()
     {
 	return this.sortedTasks;
     }
-    
+
+    /**
+       Returns the name of the list
+    */
+    public String getListName()
+    {
+	return this.listName;
+    }
+
+
+    /**
+       Overwriting the toString method.
+       Prints in the format of:
+       "listName"
+    */
+    public String toString()
+    {
+	String result = "";
+	result += this.getListName();
+	return result;
+    }
+
+
     /**
        Method that instigates dialog asking for input of a task, and due date from the user
        It then creates a new Task, and puts that in the ArrayList
        @param quickInput the computer asks for input from the user to add a task
        @return Task that was just created
     */
-    public Task makeTask(String quickInput, int priorityNumber, java.awt.Color taskColor)
+    public Task makeTask(String quickInput, String listName, int priorityNumber, java.awt.Color taskColor)
     {
 	String taskName = "";
 	String date = "";
@@ -127,7 +187,7 @@ public class TodoList implements Serializable {
 		
 		if (parentTask != null)
 		    {
-			Task newTask = new Task(taskName, year, month, day, hour, min, parentTask,priorityNumber, taskColor);
+			Task newTask = new Task(taskName, listName, year, month, day, hour, min, parentTask,priorityNumber, taskColor);
 			parentTask.getSubTasksList().add(parentTask.getSubTasksList().size(), newTask);
 			return newTask;
 		    }
@@ -136,30 +196,14 @@ public class TodoList implements Serializable {
 	    }
 	else
 	    {
-		Task newTask = new Task(taskName, year, month, day, hour, min, null, priorityNumber, taskColor);
+		Task newTask = new Task(taskName, listName, year, month, day, hour, min, null, priorityNumber, taskColor);
 		return newTask;
 	    }
 	return null;
 	
     }
     
-    
-    /**
-       Adds a new task to the list
-       @param newTask the task to be added
-    */
-    public void addTask(Task newTask){
-	this.tasks.add(newTask);
-    }
-    
-    /**
-       Method that instigates dialog asking for input to delete a task
-       @param index The index of the taks that will be deleted
-    */
-    public void deleteTask(int index)
-    {
-	this.tasks.remove(index);
-    }
+ 
     /**
        Method that instigates dialog asking for input to mark a task as completed
     */
@@ -423,22 +467,58 @@ public class TodoList implements Serializable {
 	    }
 	};
     }
-}
 
 
+    public void setCheck(JCheckBox check)
+    {
+	this.check = check;
+    }
+
+    public JCheckbox getCheck()
+    {
+	return this.check;
+    }
+
+    public void setDelete(JButton deleteButton)
+    {
+	this.deleteButton = deleteButton;
+    }
+
+    public JButton getDelete()
+    {
+	return this.deleteButton;
+    }
 
 
+    public void setEdit(JButton editButton)
+    {
+	this.editButton = editButton;
+    }
 
+    public JButton getEdit()
+    {
+	return this.editButton;
+    }
 
+    public void setUserInput(JTextField userInput)
+    {
+	this.userInput = userInput;
+    }
 
+    public JTextField getUserInput()
+    {
+	return this.userInput;
+    }
 
+    public void setLabel()
+    {
+	String listInfo = this.toString();
+	this.label = new JLabel(listInfo);
+	this.label.setPreferredSize(new Dimension(360,20));
+    }
 
-
-
-
-
-
-
-
-
-
+    public JLabel getLabel()
+    {
+	this.setLabel();
+	return this.label;
+    }

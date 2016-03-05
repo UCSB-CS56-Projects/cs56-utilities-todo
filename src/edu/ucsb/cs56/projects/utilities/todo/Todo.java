@@ -1,8 +1,7 @@
-package edu.ucsb.cs56.projects.utilties.todo;
+package edu.ucsb.cs56.projects.utilities.todo;
 
-import edu.ucsb.cs56.projects.utilties.todo.Task;
-import edu.ucsb.cs56.projects.utilties.todo.Lists;
-import edu.ucsb.cs56.projects.utilties.todo.Todo;
+import edu.ucsb.cs56.projects.utilities.todo.Task;
+import edu.ucsb.cs56.projects.utilities.todo.Todo;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
