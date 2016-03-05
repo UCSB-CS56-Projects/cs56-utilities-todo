@@ -1,7 +1,7 @@
 package edu.ucsb.cs56.projects.utilities.todo;
 
 import edu.ucsb.cs56.projects.utilities.todo.Task;
-import edu.ucsb.cs56.projects.utilities.todo.Todo;
+import edu.ucsb.cs56.projects.utilities.todo.TodoList;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -132,11 +132,14 @@ public class Todo implements Serializable {
 		System.err.println("Caught ClassNotFoundException: " + e.getMessage());
 	    }
 
+	// Add code for List compoenents (need to be added before tasks)
+
+	
 	//adds mainPanel components to their respective ArrayLists
-	for (int i=0; i< taskList.getTasks().size(); i++) {
+	for (int i=0; i< taskList.getCurrentList().getTasks().size(); i++) {
 
 	    //checks for completion and removes "[]" or "[x]"
-	    String taskInfo = taskList.getTasks().get(i).toString();
+	    String taskInfo = taskList.getCurrentList().getTasks().get(i).toString();
 	    if (taskInfo.indexOf("x") == 1) {
 		taskInfo = taskInfo.substring(4);
 	    }
@@ -148,13 +151,13 @@ public class Todo implements Serializable {
 	    JButton buttonTemp = new JButton("Delete");
 	    JButton editTemp = new JButton("Edit");
 
-	    buttonTemp.addActionListener(new DeleteListener(taskList.getTasks().get(i)));
-	    editTemp.addActionListener(new EditListener(taskList.getTasks().get(i)));
+	    buttonTemp.addActionListener(new DeleteListener(taskList.getCurrentList().getTasks().get(i)));
+	    editTemp.addActionListener(new EditListener(taskList.getCurrentList().getTasks().get(i)));
 	    
 
-	    taskList.getTasks().get(i).setEdit(editTemp);
-	    taskList.getTasks().get(i).setCheck(checkTemp);
-	    taskList.getTasks().get(i).setDelete(buttonTemp);
+	    taskList.getCurrentList().getTasks().get(i).setEdit(editTemp);
+	    taskList.getCurrentList().getTasks().get(i).setCheck(checkTemp);
+	    taskList.getCurrentList().getTasks().get(i).setDelete(buttonTemp);
 	}
 	
 	//displays the taskPanel components
@@ -257,7 +260,7 @@ public class Todo implements Serializable {
 		JFileChooser fileOpen = new JFileChooser();
 		int retrieval = fileOpen.showOpenDialog(null);
 		if (retrieval == JFileChooser.APPROVE_OPTION) {
-		    taskList = taskList.readFile(fileOpen.getSelectedFile());
+		    taskList = taskList.getCurrentList().readFile(fileOpen.getSelectedFile());
 		    mainPanel.removeAll();
 		    mainPanel.repaint();
 		    displayTasks();  
@@ -271,9 +274,9 @@ public class Todo implements Serializable {
     public class sortPriorityListener implements ActionListener {
 	public void actionPerformed(ActionEvent ev) {
 	    sorted = true;
-	    taskList.getSortedTasks().clear();
-	    taskList.updateSortedList(taskList.getTasks(), taskList.getSortedTasks());
-	    Collections.sort(taskList.getSortedTasks(), taskList.compareByPriority());
+	    taskList.getCurrentList().getSortedTasks().clear();
+	    taskList.getCurrentList().updateSortedList(taskList.getCurrentList().getTasks(), taskList.getCurrentList().getSortedTasks());
+	    Collections.sort(taskList.getCurrentList().getSortedTasks(), taskList.getCurrentList().compareByPriority());
 	    mainPanel.removeAll();
 	    mainPanel.repaint();
 	    if(hidden == true) {
@@ -288,9 +291,9 @@ public class Todo implements Serializable {
     public class sortNameListener implements ActionListener {
 	public void actionPerformed(ActionEvent ev) {
 	    sorted = true;
-	    taskList.getSortedTasks().clear();
-	    taskList.updateSortedList(taskList.getTasks(), taskList.getSortedTasks());
-	    Collections.sort(taskList.getSortedTasks(), taskList.compareByName());
+	    taskList.getCurrentList().getSortedTasks().clear();
+	    taskList.getCurrentList().updateSortedList(taskList.getCurrentList().getTasks(), taskList.getCurrentList().getSortedTasks());
+	    Collections.sort(taskList.getCurrentList().getSortedTasks(), taskList.getCurrentList().compareByName());
 	    mainPanel.removeAll();
 	    mainPanel.repaint();
 	    if(hidden == true) {
@@ -303,9 +306,9 @@ public class Todo implements Serializable {
     public class sortCompletionListener implements ActionListener {
 	public void actionPerformed(ActionEvent ev) {
 	    sorted = true;
-	    taskList.getSortedTasks().clear();
-	    taskList.updateSortedList(taskList.getTasks(), taskList.getSortedTasks());
-	    Collections.sort(taskList.getSortedTasks(), taskList.compareByCompleted());
+	    taskList.getCurrentList().getSortedTasks().clear();
+	    taskList.getCurrentList().updateSortedList(taskList.getCurrentList().getTasks(), taskList.getCurrentList().getSortedTasks());
+	    Collections.sort(taskList.getCurrentList().getSortedTasks(), taskList.getCurrentList().compareByCompleted());
 	    
 	    mainPanel.removeAll();
 	    mainPanel.repaint();
@@ -320,9 +323,9 @@ public class Todo implements Serializable {
     public class sortDateListener implements ActionListener {
 	public void actionPerformed(ActionEvent ev) {
 	    sorted = true;
-	    taskList.getSortedTasks().clear();
-	    taskList.updateSortedList(taskList.getTasks(), taskList.getSortedTasks());
-	    Collections.sort(taskList.getSortedTasks(), taskList.compareByDate());
+	    taskList.getCurrentList().getSortedTasks().clear();
+	    taskList.getCurrentList().updateSortedList(taskList.getCurrentList().getTasks(), taskList.getCurrentList().getSortedTasks());
+	    Collections.sort(taskList.getCurrentList().getSortedTasks(), taskList.getCurrentList().compareByDate());
 	    mainPanel.removeAll();
 	    mainPanel.repaint();
 	    if(hidden == true) {
@@ -351,8 +354,8 @@ public class Todo implements Serializable {
 	    this.myTask = myTask;
 	}
 	public void actionPerformed(ActionEvent ev) {
-	    taskList.getTasks().remove(this.myTask);
-	    taskList.getSortedTasks().remove(this.myTask);
+	    taskList.getCurrentList().getTasks().remove(this.myTask);
+	    taskList.getCurrentList().getSortedTasks().remove(this.myTask);
 	    mainPanel.removeAll();
 	    mainPanel.repaint();
 	    if(hidden == true) {
@@ -372,25 +375,25 @@ public class Todo implements Serializable {
 	    Color c = new Color(redInt, greenInt, blueInt);
 	    //taskList.updateSortedList(taskList.getSortedTasks(), taskList.getTasks());
 	    if(one.isSelected() == true) {
-		taskList.addTask(taskList.makeTask(addField.getText(),1,c));
+		taskList.getCurrentList().addTask(taskList.getCurrentList().makeTask(addField.getText(),taskList.getCurrentList().getListName(),1,c));
 	    } else if(two.isSelected() == true) {
-		taskList.addTask(taskList.makeTask(addField.getText(),2,c));
+		taskList.getCurrentList().addTask(taskList.getCurrentList().makeTask(addField.getText(),taskList.getCurrentList().getListName(),2,c));
 	    } else if(three.isSelected() == true) {
-		taskList.addTask(taskList.makeTask(addField.getText(),3,c));
+		taskList.getCurrentList().addTask(taskList.getCurrentList().makeTask(addField.getText(),taskList.getCurrentList().getListName(),3,c));
 	    } else {
-		taskList.addTask(taskList.makeTask(addField.getText(),0,c));
+		taskList.getCurrentList().addTask(taskList.getCurrentList().makeTask(addField.getText(),taskList.getCurrentList().getListName(),0,c));
 	    }
 	    
 	    //add new checkbox and buttons
 	    JCheckBox checkTemp = new JCheckBox();
 	    JButton buttonTemp = new JButton("Delete");
-	    int i = taskList.getTasks().size()-1;
-	    buttonTemp.addActionListener(new DeleteListener(taskList.getTasks().get(i)));
+	    int i = taskList.getCurrentList().getTasks().size()-1;
+	    buttonTemp.addActionListener(new DeleteListener(taskList.getCurrentList().getTasks().get(i)));
 	    JButton editTemp = new JButton("Edit");
-	    editTemp.addActionListener(new EditListener(taskList.getTasks().get(i)));
-	    taskList.getTasks().get(i).setEdit(editTemp);
-	    taskList.getTasks().get(i).setCheck(checkTemp);
-	    taskList.getTasks().get(i).setDelete(buttonTemp);
+	    editTemp.addActionListener(new EditListener(taskList.getCurrentList().getTasks().get(i)));
+	    taskList.getCurrentList().getTasks().get(i).setEdit(editTemp);
+	    taskList.getCurrentList().getTasks().get(i).setCheck(checkTemp);
+	    taskList.getCurrentList().getTasks().get(i).setDelete(buttonTemp);
 	    addField.setText("");
 	    mainPanel.removeAll();
 	    mainPanel.repaint();
@@ -429,45 +432,45 @@ public class Todo implements Serializable {
 	    fileSave.setCurrentDirectory(f);
 	    int retrieval = fileSave.showSaveDialog(null);
 	    if (retrieval == JFileChooser.APPROVE_OPTION) {
-		taskList.printTasksToFile(taskList.getTasks(), 0, fileSave.getSelectedFile());
+		taskList.getCurrentList().printTasksToFile(taskList.getCurrentList().getTasks(), 0, fileSave.getSelectedFile());
 	    }	   
 	}
     }
 
     public void displayTasks() {
 	if(sorted == true) {
-	    for(int i=0; i<taskList.getSortedTasks().size(); i++) {
+	    for(int i=0; i<taskList.getCurrentList().getSortedTasks().size(); i++) {
 		JButton buttonTemp = new JButton("Delete");
 		JButton editTemp = new JButton("Edit");
 
-		buttonTemp.addActionListener(new DeleteListener(taskList.getSortedTasks().get(i)));
-		editTemp.addActionListener(new EditListener(taskList.getSortedTasks().get(i)));
+		buttonTemp.addActionListener(new DeleteListener(taskList.getCurrentList().getSortedTasks().get(i)));
+		editTemp.addActionListener(new EditListener(taskList.getCurrentList().getSortedTasks().get(i)));
 
-		taskList.getSortedTasks().get(i).setDelete(buttonTemp);
-		taskList.getSortedTasks().get(i).setEdit(editTemp);
+		taskList.getCurrentList().getSortedTasks().get(i).setDelete(buttonTemp);
+		taskList.getCurrentList().getSortedTasks().get(i).setEdit(editTemp);
 		
-		mainPanel.add(taskList.getSortedTasks().get(i).getCheck());
-		mainPanel.add(taskList.getSortedTasks().get(i).getLabel());
-		mainPanel.add(taskList.getSortedTasks().get(i).getEdit());
-		mainPanel.add(taskList.getSortedTasks().get(i).getDelete());
+		mainPanel.add(taskList.getCurrentList().getSortedTasks().get(i).getCheck());
+		mainPanel.add(taskList.getCurrentList().getSortedTasks().get(i).getLabel());
+		mainPanel.add(taskList.getCurrentList().getSortedTasks().get(i).getEdit());
+		mainPanel.add(taskList.getCurrentList().getSortedTasks().get(i).getDelete());
 	    }
 	mainPanel.validate();
 	}
 	else {
-  	    for(int i=0; i<taskList.getTasks().size(); i++) {
+  	    for(int i=0; i<taskList.getCurrentList().getTasks().size(); i++) {
 		JButton buttonTemp = new JButton("Delete");
 		JButton editTemp = new JButton("Edit");
 		
-		buttonTemp.addActionListener(new DeleteListener(taskList.getTasks().get(i)));
-		editTemp.addActionListener(new EditListener(taskList.getTasks().get(i)));
+		buttonTemp.addActionListener(new DeleteListener(taskList.getCurrentList().getTasks().get(i)));
+		editTemp.addActionListener(new EditListener(taskList.getCurrentList().getTasks().get(i)));
 
-		taskList.getTasks().get(i).setDelete(buttonTemp);
-		taskList.getTasks().get(i).setEdit(editTemp);
+		taskList.getCurrentList().getTasks().get(i).setDelete(buttonTemp);
+		taskList.getCurrentList().getTasks().get(i).setEdit(editTemp);
 		
-		mainPanel.add(taskList.getTasks().get(i).getCheck());
-		mainPanel.add(taskList.getTasks().get(i).getLabel());
-		mainPanel.add(taskList.getTasks().get(i).getEdit());
-		mainPanel.add(taskList.getTasks().get(i).getDelete());
+		mainPanel.add(taskList.getCurrentList().getTasks().get(i).getCheck());
+		mainPanel.add(taskList.getCurrentList().getTasks().get(i).getLabel());
+		mainPanel.add(taskList.getCurrentList().getTasks().get(i).getEdit());
+		mainPanel.add(taskList.getCurrentList().getTasks().get(i).getDelete());
 	    }
 	mainPanel.validate();
 	}
@@ -475,40 +478,40 @@ public class Todo implements Serializable {
 
     public void displayComTasks() {
 	if(sorted == true) {
-	    for(int i = 0; i < taskList.getSortedTasks().size(); i++) {
-		if(taskList.getSortedTasks().get(i).getCheck().isSelected() == false) {
+	    for(int i = 0; i < taskList.getCurrentList().getSortedTasks().size(); i++) {
+		if(taskList.getCurrentList().getSortedTasks().get(i).getCheck().isSelected() == false) {
 		    JButton buttonTemp = new JButton("Delete");
 		    JButton editTemp = new JButton("Edit");
 		    
-		    buttonTemp.addActionListener(new DeleteListener(taskList.getSortedTasks().get(i)));
-		    editTemp.addActionListener(new EditListener(taskList.getSortedTasks().get(i)));
+		    buttonTemp.addActionListener(new DeleteListener(taskList.getCurrentList().getSortedTasks().get(i)));
+		    editTemp.addActionListener(new EditListener(taskList.getCurrentList().getSortedTasks().get(i)));
 
-		    taskList.getSortedTasks().get(i).setDelete(buttonTemp);
-		    taskList.getSortedTasks().get(i).setEdit(editTemp);
+		    taskList.getCurrentList().getSortedTasks().get(i).setDelete(buttonTemp);
+		    taskList.getCurrentList().getSortedTasks().get(i).setEdit(editTemp);
 
-		    mainPanel.add(taskList.getSortedTasks().get(i).getCheck());
-		    mainPanel.add(taskList.getSortedTasks().get(i).getLabel());
-		    mainPanel.add(taskList.getSortedTasks().get(i).getEdit());
-		    mainPanel.add(taskList.getSortedTasks().get(i).getDelete());
+		    mainPanel.add(taskList.getCurrentList().getSortedTasks().get(i).getCheck());
+		    mainPanel.add(taskList.getCurrentList().getSortedTasks().get(i).getLabel());
+		    mainPanel.add(taskList.getCurrentList().getSortedTasks().get(i).getEdit());
+		    mainPanel.add(taskList.getCurrentList().getSortedTasks().get(i).getDelete());
 		}
 	    }
 	    mainPanel.validate();
 	} else {
-	    for(int i = 0; i < taskList.getTasks().size(); i++) {
-		if(taskList.getTasks().get(i).getCheck().isSelected() == false) {
+	    for(int i = 0; i < taskList.getCurrentList().getTasks().size(); i++) {
+		if(taskList.getCurrentList().getTasks().get(i).getCheck().isSelected() == false) {
 		    JButton buttonTemp = new JButton("Delete");
 		    JButton editTemp = new JButton("Edit");
 		    
-		    buttonTemp.addActionListener(new DeleteListener(taskList.getTasks().get(i)));
-		    editTemp.addActionListener(new EditListener(taskList.getTasks().get(i)));
+		    buttonTemp.addActionListener(new DeleteListener(taskList.getCurrentList().getTasks().get(i)));
+		    editTemp.addActionListener(new EditListener(taskList.getCurrentList().getTasks().get(i)));
 
-		    taskList.getTasks().get(i).setDelete(buttonTemp);
-		    taskList.getTasks().get(i).setEdit(editTemp);
+		    taskList.getCurrentList().getTasks().get(i).setDelete(buttonTemp);
+		    taskList.getCurrentList().getTasks().get(i).setEdit(editTemp);
 		    
-		    mainPanel.add(taskList.getTasks().get(i).getCheck());
-		    mainPanel.add(taskList.getTasks().get(i).getLabel());
-		    mainPanel.add(taskList.getTasks().get(i).getEdit());
-		    mainPanel.add(taskList.getTasks().get(i).getDelete());
+		    mainPanel.add(taskList.getCurrentList().getTasks().get(i).getCheck());
+		    mainPanel.add(taskList.getCurrentList().getTasks().get(i).getLabel());
+		    mainPanel.add(taskList.getCurrentList().getTasks().get(i).getEdit());
+		    mainPanel.add(taskList.getCurrentList().getTasks().get(i).getDelete());
 		}
 	    }
 	    mainPanel.validate();
@@ -518,8 +521,8 @@ public class Todo implements Serializable {
     
     public void displayTasks(Task myTask) {
 	if(sorted) {
-	    for(int i=0; i<taskList.getSortedTasks().size(); i++) {
-		Task thisTask = taskList.getSortedTasks().get(i);
+	    for(int i=0; i<taskList.getCurrentList().getSortedTasks().size(); i++) {
+		Task thisTask = taskList.getCurrentList().getSortedTasks().get(i);
 		if(thisTask==myTask){
 		    mainPanel.add(thisTask.getCheck());
 		    JTextField input = new JTextField(thisTask.getName(),30);
@@ -540,8 +543,8 @@ public class Todo implements Serializable {
 	    mainPanel.validate();
 	}
 	else {
-  	    for(int i=0; i<taskList.getTasks().size(); i++) {
-		Task thisTask = taskList.getTasks().get(i);
+  	    for(int i=0; i<taskList.getCurrentList().getTasks().size(); i++) {
+		Task thisTask = taskList.getCurrentList().getTasks().get(i);
 		if(thisTask==myTask){
 		    mainPanel.add(thisTask.getCheck());
 		    JTextField input = new JTextField(thisTask.getName(),30);
@@ -584,18 +587,18 @@ public class Todo implements Serializable {
     public class deleteCompletedListener implements ActionListener{
 	public void actionPerformed(ActionEvent ev){
 	    if(sorted==true){
-       		for(int i = 0; i<taskList.getSortedTasks().size();i++){
-		    if(taskList.getSortedTasks().get(i).getCheck().isSelected()==true){
-			taskList.getTasks().remove(taskList.getSortedTasks().get(i));
-			taskList.getSortedTasks().remove(taskList.getSortedTasks().get(i));
+       		for(int i = 0; i<taskList.getCurrentList().getSortedTasks().size();i++){
+		    if(taskList.getCurrentList().getSortedTasks().get(i).getCheck().isSelected()==true){
+			taskList.getCurrentList().getTasks().remove(taskList.getCurrentList().getSortedTasks().get(i));
+			taskList.getCurrentList().getSortedTasks().remove(taskList.getCurrentList().getSortedTasks().get(i));
 			i = 0;
 		    }
 		}
 	    }
 	    else{
-		for(int i = 0; i< taskList.getTasks().size();i++){
-		    if(taskList.getTasks().get(i).getCheck().isSelected()==true){
-			taskList.getTasks().remove(taskList.getTasks().get(i));
+		for(int i = 0; i< taskList.getCurrentList().getTasks().size();i++){
+		    if(taskList.getCurrentList().getTasks().get(i).getCheck().isSelected()==true){
+			taskList.getCurrentList().getTasks().remove(taskList.getCurrentList().getTasks().get(i));
 			i = 0;
 		    }
 		}
@@ -614,15 +617,16 @@ public class Todo implements Serializable {
 	public void actionPerformed(ActionEvent ev){
 	    int i;
 	    if(sorted==true){
-		for(i = 0; i<taskList.getSortedTasks().size(); i++){
-		    if(taskList.getSortedTasks().get(i)==this.myTask)
+		for(i = 0; i<taskList.getCurrentList().getSortedTasks().size(); i++){
+		    if(taskList.getCurrentList().getSortedTasks().get(i)==this.myTask)
 			break;
 		}
-		if(i<taskList.getSortedTasks().size()){
-		    Task newTask = taskList.makeTask(this.myTask.getUserInput().getText(),
-						     taskList.getSortedTasks().get(i).getPriority(),
-						     taskList.getSortedTasks().get(i).getColor());
-		    taskList.getSortedTasks().set(i, newTask);
+		if(i<taskList.getCurrentList().getSortedTasks().size()){
+		    Task newTask = taskList.getCurrentList().makeTask(this.myTask.getUserInput().getText(),
+								      taskList.getCurrentList().getListName(),
+								      taskList.getCurrentList().getSortedTasks().get(i).getPriority(),
+								      taskList.getCurrentList().getSortedTasks().get(i).getColor());
+		    taskList.getCurrentList().getSortedTasks().set(i, newTask);
 		    JCheckBox checkTemp = new JCheckBox();
 		    JButton buttonTemp = new JButton("Delete");
 		    buttonTemp.addActionListener(new DeleteListener(newTask));
@@ -637,15 +641,16 @@ public class Todo implements Serializable {
 		}
 	    }
 	    else{
-		for(i = 0; i<taskList.getTasks().size(); i++){
-		    if(taskList.getTasks().get(i)==this.myTask)
+		for(i = 0; i<taskList.getCurrentList().getTasks().size(); i++){
+		    if(taskList.getCurrentList().getTasks().get(i)==this.myTask)
 			break;
 		}
-		if(i<taskList.getTasks().size()){
-		    Task newTask = taskList.makeTask(this.myTask.getUserInput().getText(),
-						     taskList.getTasks().get(i).getPriority(),
-						     taskList.getTasks().get(i).getColor());
-		    taskList.getTasks().set(i, newTask);
+		if(i<taskList.getCurrentList().getTasks().size()){
+		    Task newTask = taskList.getCurrentList().makeTask(this.myTask.getUserInput().getText(),
+								      taskList.getCurrentList().getListName(),
+								      taskList.getCurrentList().getTasks().get(i).getPriority(),
+								      taskList.getCurrentList().getTasks().get(i).getColor());
+		    taskList.getCurrentList().getTasks().set(i, newTask);
 		    JCheckBox checkTemp = new JCheckBox();
 		    JButton buttonTemp = new JButton("Delete");
 		    buttonTemp.addActionListener(new DeleteListener(newTask));

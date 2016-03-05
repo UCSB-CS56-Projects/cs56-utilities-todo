@@ -5,14 +5,15 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
-import java.io.Serializable;\
+import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.GregorianCalendar;
 import java.util.Scanner;
-import javax.io.*;
+import java.io.*;
 import javax.swing.*;
+import java.awt.*;
 import java.util.*;
-import java.awt.events.*;
+import java.awt.event.*;
 
 /**
    A single list of tasks in a todo list
@@ -25,7 +26,7 @@ public class List implements Serializable {
     private String listName;
     private ArrayList<Task> tasks;
     private ArrayList<Task> sortedTasks;
-    private JCheckbox check;
+    private JCheckBox check;
     private JButton deleteButton;
     private JButton editButton;
     private JLabel label;
@@ -474,7 +475,7 @@ public class List implements Serializable {
 	this.check = check;
     }
 
-    public JCheckbox getCheck()
+    public JCheckBox getCheck()
     {
 	return this.check;
     }
@@ -522,3 +523,4 @@ public class List implements Serializable {
 	this.setLabel();
 	return this.label;
     }
+}
