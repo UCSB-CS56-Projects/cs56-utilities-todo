@@ -30,6 +30,7 @@ public class Todo implements Serializable {
     private JPanel taskPanel;
     private JPanel categoryPanel;
     private JPanel mainPanel;
+    private JTextField addListField;
     private JPanel leftPanel;
     private Box taskBox;
     private Box categoryBox;
@@ -68,7 +69,7 @@ public class Todo implements Serializable {
 
 	categoryBox = Box.createVerticalBox();
 	categoryBox.setBorder(BorderFactory.createTitledBorder("Lists"));
-	categoryBox.setSize(300,600);
+	categoryBox.setSize(280,600);
 	
 	taskBox = Box.createVerticalBox(); // Contains mainPanel
 	taskBox.setBorder(BorderFactory.createTitledBorder("Tasks"));
@@ -84,12 +85,12 @@ public class Todo implements Serializable {
 	hidden = false;
 	
 	JPanel midPanel = new JPanel(new GridLayout(2,0));
-	JPanel addPanel = new JPanel();
+	JPanel addPanel = new JPanel(new GridLayout(2,0));
 
-	leftPanel.setPreferredSize(new Dimension(250, 575));
+	leftPanel.setPreferredSize(new Dimension(230, 575));
 	mainPanel.setPreferredSize(new Dimension(550,575));
 
-	categoryPanel.setPreferredSize(new Dimension(300,700));
+	categoryPanel.setPreferredSize(new Dimension(280,700));
 	categoryPanel.add(categoryBox);
 	
 	taskPanel.setPreferredSize(new Dimension(600,700));
@@ -133,10 +134,28 @@ public class Todo implements Serializable {
 	    }
 
 	// Add code for List compoenents (need to be added before tasks)
+	for(int i=0; i < taskList.getLists().size(); i++) {
+	    String listInfo = taskList.getLists().get(i).toString();
+
+	    JRadioButton listCheckTemp = new JRadioButton();
+	    JButton listDeleteTemp = new JButton("X");
+	    JButton listEditTemp = new JButton("Edit");
+
+	    listDeleteTemp.addActionListener(new DeleteListListener(taskList.getLists().get(i)));
+	    listEditTemp.addActionListener(new EditListListener(taskList.getLists().get(i)));
+
+	    taskList.getLists().get(i).setEdit(listEditTemp);
+	    taskList.getLists().get(i).setCheck(listCheckTemp);
+	    taskList.getLists().get(i).setDelete(listDeleteTemp);
+
+	    taskList.getListGroup().add(taskList.getLists().get(i).getCheck());
+	}
+
+	this.displayLists();
 
 	
 	//adds mainPanel components to their respective ArrayLists
-	for (int i=0; i< taskList.getCurrentList().getTasks().size(); i++) {
+	for (int i=0; i < taskList.getCurrentList().getTasks().size(); i++) {
 
 	    //checks for completion and removes "[]" or "[x]"
 	    String taskInfo = taskList.getCurrentList().getTasks().get(i).toString();
@@ -176,8 +195,6 @@ public class Todo implements Serializable {
        	sortDateButton.addActionListener(new sortDateListener());
 	toggleCompletedButton.addActionListener(new toggleCompletedListener());
 	deleteCompletedButton.addActionListener(new deleteCompletedListener());
-
-        addField = new JTextField("", 20);
 	
 	Box cbb = Box.createHorizontalBox();
 	one = new JCheckBox("!");
@@ -203,10 +220,17 @@ public class Todo implements Serializable {
 	colorBox.add(spin2);
 	colorBox.add(spin3);
 	colorBox.setBorder(BorderFactory.createTitledBorder("Color (RGB)"));
+       
+	addListField = new JTextField("",20);
+	addField = new JTextField("",20);
 	
+	JLabel formatListLabel = new JLabel("(Taskname)");
+	formatListLabel.setFont(new Font("Serif", Font.PLAIN, 11));
 
 	JLabel formatLabel = new JLabel("(Taskname MM/DD/YY HH:TT)");
 	formatLabel.setFont(new Font("Serif", Font.PLAIN, 11));
+
+	JButton addListButton = new JButton("ADD LIST");
 	JButton addButton = new JButton("ADD TASK");
 	
 	JMenuBar menuBar = new JMenuBar();
@@ -229,6 +253,9 @@ public class Todo implements Serializable {
 
 	JPanel sortPanel = new JPanel();
 	JPanel comPanel = new JPanel();
+
+	JPanel addListPanel = new JPanel();
+	JPanel addTaskPanel = new JPanel();
 	
 	sortPanel.add(sortPriorityButton);
         sortPanel.add(sortNameButton);
@@ -239,14 +266,21 @@ public class Todo implements Serializable {
 
 	midPanel.add(sortPanel);
 	midPanel.add(comPanel);
-	
-	addPanel.add(addField);
-	addPanel.add(cbb);
-	addPanel.add(colorBox);
-        addPanel.add(addButton);
-	addPanel.add(formatLabel);
+
+	addListPanel.add(addListField);
+	addListPanel.add(addListButton);
+	addListPanel.add(formatListLabel);
+	addListButton.addActionListener(new AddListListener());
+	addTaskPanel.add(addField);
+	addTaskPanel.add(cbb);
+	addTaskPanel.add(colorBox);
+        addTaskPanel.add(addButton);
+	addTaskPanel.add(formatLabel);
 	addButton.addActionListener(new AddListener());
 
+	addPanel.add(addListPanel);
+	addPanel.add(addTaskPanel);
+	
 	frame.pack();
 	frame.setVisible(true);
 	
@@ -347,6 +381,27 @@ public class Todo implements Serializable {
 	    }
 	}
     }
+
+    public class DeleteListListener implements ActionListener {
+	private List myList;
+	public DeleteListListener(List myList) {
+	    this.myList = myList;
+	}
+	public void actionPerformed(ActionEvent ev) {
+	    //Delete all the tasks in that List
+	    // Then remove the list from taskList
+	    int j = taskList.getLists().indexOf(this.myList);
+	    for(int i = 0; i < taskList.getLists().get(j).getTasks().size(); i++) {
+		taskList.getLists().get(j).getTasks().remove(taskList.getLists().get(j).getTasks().get(i));
+		taskList.getLists().get(j).getSortedTasks().remove(taskList.getLists().get(j).getSortedTasks().get(i));
+	    }
+	    taskList.getLists().remove(this.myList);
+	    leftPanel.removeAll();
+	    leftPanel.repaint();
+	    displayLists();
+	}
+    }
+	    
     
     public class DeleteListener implements ActionListener {
 	private Task myTask;
@@ -365,6 +420,33 @@ public class Todo implements Serializable {
 	    }
 	}
     }
+
+    public class AddListListener implements ActionListener {
+	public void actionPerformed(ActionEvent ev) {
+
+	    taskList.addList(taskList.makeList(addListField.getText(),
+							  new ArrayList<Task>(),
+							  new ArrayList<Task>()));
+	    JRadioButton listCheckTemp = new JRadioButton();
+	    JButton listDeleteTemp = new JButton("X");
+	    JButton listEditTemp = new JButton("Edit");
+	    int i = taskList.getLists().size() - 1;
+	    
+	    listDeleteTemp.addActionListener(new DeleteListListener(taskList.getLists().get(i)));
+	    listEditTemp.addActionListener(new EditListListener(taskList.getLists().get(i)));
+
+	    taskList.getLists().get(i).setEdit(listEditTemp);
+	    taskList.getLists().get(i).setCheck(listCheckTemp);
+	    taskList.getLists().get(i).setDelete(listDeleteTemp);
+	    taskList.getListGroup().add(taskList.getLists().get(i).getCheck());
+	    addField.setText("");
+	    leftPanel.removeAll();
+	    leftPanel.repaint();
+	    displayLists();
+	    taskList.printListNames();
+	}
+    }
+	    
 	    
     public class AddListener implements ActionListener {
 	public void actionPerformed(ActionEvent ev) {
@@ -411,6 +493,20 @@ public class Todo implements Serializable {
 	}
     }
 
+    public class EditListListener implements ActionListener {
+	private List myList;
+	public EditListListener(List myList) {
+	    this.myList = myList;
+	    timer.start();
+	}
+	public void actionPerformed(ActionEvent ev) {
+	    leftPanel.removeAll();
+	    leftPanel.repaint();
+	    displayLists(myList);
+	    timer.stop();
+	}
+    }
+
     public class EditListener implements ActionListener{
 	private Task myTask;
 	public EditListener(Task myTask){
@@ -434,6 +530,28 @@ public class Todo implements Serializable {
 	    if (retrieval == JFileChooser.APPROVE_OPTION) {
 		taskList.getCurrentList().printTasksToFile(taskList.getCurrentList().getTasks(), 0, fileSave.getSelectedFile());
 	    }	   
+	}
+    }
+
+    public void displayLists() {
+	for(int i = 0; i < taskList.getLists().size(); i++) {
+	    JButton listDeleteTemp = new JButton("X");
+	    JButton listEditTemp = new JButton("Edit");
+
+	    listDeleteTemp.addActionListener(new DeleteListListener(taskList.getLists().get(i)));
+	    listEditTemp.addActionListener(new EditListListener(taskList.getLists().get(i)));
+
+	    taskList.getLists().get(i).setDelete(listDeleteTemp);
+	    taskList.getLists().get(i).setEdit(listEditTemp);
+
+	    if(taskList.getLists().get(i) == taskList.getCurrentList()) {
+		taskList.getLists().get(i).getCheck().setSelected(true);
+	    }
+
+	    leftPanel.add(taskList.getLists().get(i).getCheck());
+	    leftPanel.add(taskList.getLists().get(i).getLabel());
+	    leftPanel.add(taskList.getLists().get(i).getEdit());
+	    leftPanel.add(taskList.getLists().get(i).getDelete());
 	}
     }
 
@@ -518,6 +636,30 @@ public class Todo implements Serializable {
 	}
     }
 	    
+
+    public void displayLists(List myList) {
+	for(int i = 0; i < taskList.getLists().size(); i++) {
+	    List thisList = taskList.getLists().get(i);
+	    if(thisList == myList) {
+		leftPanel.add(thisList.getCheck());
+		JTextField input = new JTextField(thisList.getListName(),20);
+		thisList.setUserInput(input);
+		leftPanel.add(thisList.getUserInput());
+		JButton listEnterButton = new JButton("Enter");
+		listEnterButton.addActionListener(new EnterListListener(thisList));
+		leftPanel.add(listEnterButton);
+		leftPanel.add(thisList.getDelete());
+	    }
+	    else {
+		leftPanel.add(thisList.getCheck());
+		leftPanel.add(thisList.getLabel());
+		leftPanel.add(thisList.getEdit());
+		leftPanel.add(thisList.getDelete());
+	    }
+	}
+	leftPanel.validate();
+    }
+
     
     public void displayTasks(Task myTask) {
 	if(sorted) {
@@ -606,6 +748,42 @@ public class Todo implements Serializable {
 	    mainPanel.removeAll();
 	    mainPanel.repaint();
 	    displayTasks();
+	}
+    }
+
+    public class EnterListListener implements ActionListener {
+	private List myList;
+	public EnterListListener(List myList) {
+	    this.myList = myList;
+	}
+	public void actionPerformed(ActionEvent ev) {
+	    int i;
+	    for(i = 0; i < taskList.getLists().size(); i++) {
+		if(taskList.getLists().get(i) == this.myList) {
+		    break;
+		}
+	    }
+	    if(i < taskList.getLists().size()) {
+		List newList = taskList.makeList(this.myList.getUserInput().getText(), this.myList.getTasks(),this.myList.getSortedTasks());
+		taskList.getLists().set(i,newList);
+		JRadioButton listCheckTemp = new JRadioButton();
+		JButton listDeleteTemp = new JButton("X");
+		JButton listEditTemp = new JButton("Edit");
+
+		listDeleteTemp.addActionListener(new DeleteListListener(newList));
+		listEditTemp.addActionListener(new EditListListener(newList));
+
+		newList.setEdit(listEditTemp);
+		newList.setCheck(listCheckTemp);
+		newList.setDelete(listDeleteTemp);
+
+		taskList.getListGroup().add(taskList.getLists().get(i).getCheck());
+
+		leftPanel.removeAll();
+		leftPanel.repaint();
+		displayLists();
+		displayTasks();
+	    }
 	}
     }
 

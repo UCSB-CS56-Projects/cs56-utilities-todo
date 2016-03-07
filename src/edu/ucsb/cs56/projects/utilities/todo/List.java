@@ -26,7 +26,7 @@ public class List implements Serializable {
     private String listName;
     private ArrayList<Task> tasks;
     private ArrayList<Task> sortedTasks;
-    private JCheckBox check;
+    private JRadioButton check;
     private JButton deleteButton;
     private JButton editButton;
     private JLabel label;
@@ -41,6 +41,19 @@ public class List implements Serializable {
 	this.listName = listName;
 	this.tasks = new ArrayList<Task>();
 	this.sortedTasks = new ArrayList<Task>();
+    }
+
+    /**
+       Constructor for a single list of tasks
+       @param listName the name of the new list
+       @param tasks the ArrayList of tasks to be placed in this list
+       @param sortedTasks the ArrayList of sorted tasks to be placed in this list
+    */
+    public List(String listName, ArrayList<Task> tasks, ArrayList<Task> sortedTasks)
+    {
+	this.listName = listName;
+	this.tasks = tasks;
+	this.sortedTasks = sortedTasks;
     }
 
     /**
@@ -470,12 +483,12 @@ public class List implements Serializable {
     }
 
 
-    public void setCheck(JCheckBox check)
+    public void setCheck(JRadioButton check)
     {
 	this.check = check;
     }
 
-    public JCheckBox getCheck()
+    public JRadioButton getCheck()
     {
 	return this.check;
     }
@@ -515,7 +528,7 @@ public class List implements Serializable {
     {
 	String listInfo = this.toString();
 	this.label = new JLabel(listInfo);
-	this.label.setPreferredSize(new Dimension(360,20));
+	this.label.setPreferredSize(new Dimension(75,20));
     }
 
     public JLabel getLabel()
