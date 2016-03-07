@@ -120,7 +120,7 @@ public class List implements Serializable {
        @param quickInput the computer asks for input from the user to add a task
        @return Task that was just created
     */
-    public Task makeTask(String quickInput, String listName, int priorityNumber, java.awt.Color taskColor)
+    public Task makeTask(String quickInput, int priorityNumber, java.awt.Color taskColor)
     {
 	String taskName = "";
 	String date = "";
@@ -201,7 +201,7 @@ public class List implements Serializable {
 		
 		if (parentTask != null)
 		    {
-			Task newTask = new Task(taskName, listName, year, month, day, hour, min, parentTask,priorityNumber, taskColor);
+			Task newTask = new Task(taskName, year, month, day, hour, min, parentTask,priorityNumber, taskColor);
 			parentTask.getSubTasksList().add(parentTask.getSubTasksList().size(), newTask);
 			return newTask;
 		    }
@@ -210,7 +210,7 @@ public class List implements Serializable {
 	    }
 	else
 	    {
-		Task newTask = new Task(taskName, listName, year, month, day, hour, min, null, priorityNumber, taskColor);
+		Task newTask = new Task(taskName, year, month, day, hour, min, null, priorityNumber, taskColor);
 		return newTask;
 	    }
 	return null;

@@ -19,7 +19,6 @@ import java.awt.event.*;
 public class Task implements Serializable {
 
     private String taskName;
-    private String listName;
     private Calendar dueDate;
     private int priority;
     private Color color;
@@ -42,10 +41,9 @@ public class Task implements Serializable {
        @param hour the hour in which the due date is
        @param min the minute at which the due date is
     */
-    public Task(String taskName, String listName, int year, int month, int day, int hour, int min, Task parentTask, int priorityInteger, Color newColor)
+    public Task(String taskName, int year, int month, int day, int hour, int min, Task parentTask, int priorityInteger, Color newColor)
     {
 	this.taskName = taskName;
-	this.listName = listName;
 	//if no date and time
 	if (day == -1 && hour == -1) {
 	    this.dueDate = null;
@@ -82,14 +80,6 @@ public class Task implements Serializable {
     public String getName()
     {
 	return this.taskName;
-    }
-
-    /**
-       Returns the name of the list that the task is in
-    */
-    public String getListName()
-    {
-	return this.listName;
     }
     
     /**
