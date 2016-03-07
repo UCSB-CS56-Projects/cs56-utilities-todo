@@ -69,11 +69,11 @@ public class Todo implements Serializable {
 
 	categoryBox = Box.createVerticalBox();
 	categoryBox.setBorder(BorderFactory.createTitledBorder("Lists"));
-	categoryBox.setSize(280,600);
+	categoryBox.setSize(280,550);
 	
 	taskBox = Box.createVerticalBox(); // Contains mainPanel
 	taskBox.setBorder(BorderFactory.createTitledBorder("Tasks"));
-	taskBox.setSize(600,600);
+	taskBox.setSize(600,550);
 
 	leftPanel = new JPanel(); // Holds all list names
 	mainPanel = new JPanel(); // Holds all the printed tasks
@@ -87,8 +87,8 @@ public class Todo implements Serializable {
 	JPanel midPanel = new JPanel(new GridLayout(2,0));
 	JPanel addPanel = new JPanel(new GridLayout(2,0));
 
-	leftPanel.setPreferredSize(new Dimension(230, 575));
-	mainPanel.setPreferredSize(new Dimension(550,575));
+	leftPanel.setPreferredSize(new Dimension(230, 525));
+	mainPanel.setPreferredSize(new Dimension(550,525));
 
 	categoryPanel.setPreferredSize(new Dimension(280,700));
 	categoryPanel.add(categoryBox);
@@ -141,6 +141,7 @@ public class Todo implements Serializable {
 	    JButton listDeleteTemp = new JButton("X");
 	    JButton listEditTemp = new JButton("Edit");
 
+	    listCheckTemp.addActionListener(new radioButtonListener(taskList.getLists().get(i)));
 	    listDeleteTemp.addActionListener(new DeleteListListener(taskList.getLists().get(i)));
 	    listEditTemp.addActionListener(new EditListListener(taskList.getLists().get(i)));
 
@@ -432,6 +433,7 @@ public class Todo implements Serializable {
 	    JButton listEditTemp = new JButton("Edit");
 	    int i = taskList.getLists().size() - 1;
 	    
+	    listCheckTemp.addActionListener(new radioButtonListener(taskList.getLists().get(i)));
 	    listDeleteTemp.addActionListener(new DeleteListListener(taskList.getLists().get(i)));
 	    listEditTemp.addActionListener(new EditListListener(taskList.getLists().get(i)));
 
@@ -439,11 +441,12 @@ public class Todo implements Serializable {
 	    taskList.getLists().get(i).setCheck(listCheckTemp);
 	    taskList.getLists().get(i).setDelete(listDeleteTemp);
 	    taskList.getListGroup().add(taskList.getLists().get(i).getCheck());
-	    addField.setText("");
+	    addListField.setText("");
 	    leftPanel.removeAll();
 	    leftPanel.repaint();
 	    displayLists();
 	    taskList.printListNames();
+	    System.out.println(taskList.getCurrentList().getListName());
 	}
     }
 	    
@@ -553,6 +556,7 @@ public class Todo implements Serializable {
 	    leftPanel.add(taskList.getLists().get(i).getEdit());
 	    leftPanel.add(taskList.getLists().get(i).getDelete());
 	}
+	leftPanel.validate();
     }
 
     public void displayTasks() {
@@ -707,6 +711,26 @@ public class Todo implements Serializable {
 	    mainPanel.validate();
 	}
     }
+
+
+    public class radioButtonListener implements ActionListener {
+	private List myList;
+	public radioButtonListener(List myList) {
+	    this.myList = myList;
+	}
+	public void actionPerformed(ActionEvent ev) {
+	    // Set the list that the radio button was clicked for to currentList
+	    taskList.setCurrentList(this.myList);
+	    mainPanel.removeAll();
+	    mainPanel.repaint();
+	    if(hidden == true) {
+		displayComTasks();
+	    } else {
+		displayTasks();
+	    }
+	}
+    }
+	    
 
     public class toggleCompletedListener implements ActionListener {
 	public void actionPerformed(ActionEvent ev) {
