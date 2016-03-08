@@ -21,7 +21,8 @@ import javax.swing.*;
 */
 public class TodoList implements Serializable {
     
-    private ArrayList<List> categories = new ArrayList<List>();
+    private ArrayList<List> lists = new ArrayList<List>();
+    private ArrayList<List> sortedLists = new ArrayList<List>();
     private List currentList;
     private ButtonGroup listGroup = new ButtonGroup();
 
@@ -33,9 +34,9 @@ public class TodoList implements Serializable {
 	List starterList = new List("General");
 	starterList.setCheck(new JRadioButton());
 	starterList.getCheck().setSelected(true);
-	this.categories.add(starterList);
-	this.listGroup.add(this.categories.get(0).getCheck());
-	this.currentList = this.categories.get(0);
+	this.lists.add(starterList);
+	this.listGroup.add(this.lists.get(0).getCheck());
+	this.currentList = this.lists.get(0);
     }
 
     /**
@@ -44,16 +45,26 @@ public class TodoList implements Serializable {
     */
     public ArrayList<List> getLists()
     {
-	return this.categories;
+	return this.lists;
     }
 
+    /**
+       Getter method for the ArrayList of all Lists, sorted
+       @return a sorted ArrayList of the Lists
+    */
+    public ArrayList<List> getSortedLists()
+    {
+	return this.sortedLists;
+    }
+    
+    
     /**
        Adds a List to the ArrayList
        @param list List to be added
     */
     public void addList(List list)
     {
-	this.categories.add(list);
+	this.lists.add(list);
     }
 
     /**
@@ -62,7 +73,7 @@ public class TodoList implements Serializable {
     */
     public void removeList(List list)
     {
-	this.categories.remove(list);
+	this.lists.remove(list);
     }
 
     /**
@@ -139,9 +150,41 @@ public class TodoList implements Serializable {
 
     public void printListNames()
     {
-	for(int i = 0; i < this.categories.size(); i++) {
-	    System.out.println(this.categories.get(i).getListName());
+	for(int i = 0; i < this.lists.size(); i++) {
+	    System.out.println(this.lists.get(i).getListName());
 	}
+    }
+
+
+    /**
+       The TodoList has a list of all Lists, but is only updated when the user
+       wants to sort by name. The list of Lists is first emptied and refilled
+       with this function.
+       This method does not atually sort the list of Lists
+       @param lists the unsorted ArrayList of Lists
+       @param sortedLists the ArrayList that will be populated with the unsorted ArrayList of Lists
+    */
+    public void updateSortedLists(ArrayList<List> lists, ArrayList<List> sortedLists)
+    {
+	for(int i = 0; i < lists.size(); i++)
+	    {
+		sortedLists.add(lists.get(i));
+
+	    }
+    }
+
+    /**
+       A new Comparator tha allows to Lists to be compared by list name
+    */
+    static Comparator<List> compareByListName()
+    {
+	return new Comparator<List>() {
+	    public int compare(List l1, List l2) {
+		String listName1 = l1.getListName().toUpperCase();
+		String listName2 = l2.getListName().toUpperCase();
+		return listName1.compareTo(listName2);
+	    }
+	};
     }
 }
 
