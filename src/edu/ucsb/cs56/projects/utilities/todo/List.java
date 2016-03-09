@@ -24,8 +24,8 @@ import java.awt.event.*;
 public class List implements Serializable {
 
     private String listName;
-    private ArrayList<Task> tasks;
-    private ArrayList<Task> sortedTasks;
+    private ArrayList<Task> tasks = new ArrayList<Task>();
+    private ArrayList<Task> sortedTasks = new ArrayList<Task>();
     private JRadioButton check;
     private JButton deleteButton;
     private JButton editButton;
@@ -39,8 +39,6 @@ public class List implements Serializable {
     public List(String listName)
     {
 	this.listName = listName;
-	this.tasks = new ArrayList<Task>();
-	this.sortedTasks = new ArrayList<Task>();
     }
 
     /**

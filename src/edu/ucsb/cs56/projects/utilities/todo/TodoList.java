@@ -35,6 +35,7 @@ public class TodoList implements Serializable {
 	starterList.setCheck(new JRadioButton());
 	starterList.getCheck().setSelected(true);
 	this.lists.add(starterList);
+	this.sortedLists.add(starterList);
 	this.listGroup.add(this.lists.get(0).getCheck());
 	this.currentList = this.lists.get(0);
     }

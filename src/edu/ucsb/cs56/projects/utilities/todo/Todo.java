@@ -136,6 +136,7 @@ public class Todo implements Serializable {
 	    }
 
 	// Add code for List components (need to be added before tasks)'
+	taskList.printListNames();
 	if(!taskList.getLists().isEmpty()) {
 	    for(int i=0; i < taskList.getLists().size(); i++) {
 		String listInfo = taskList.getLists().get(i).toString();
@@ -157,34 +158,35 @@ public class Todo implements Serializable {
 	    
 	    this.displayLists();
 	    
-	    
-	    //adds mainPanel components to their respective ArrayLists
-	    for (int i=0; i < taskList.getCurrentList().getTasks().size(); i++) {
-		
-		//checks for completion and removes "[]" or "[x]"
-		String taskInfo = taskList.getCurrentList().getTasks().get(i).toString();
-		if (taskInfo.indexOf("x") == 1) {
-		    taskInfo = taskInfo.substring(4);
+	    if(taskList.getCurrentList() != null) {
+		//adds mainPanel components to their respective ArrayLists
+		for (int i=0; i < taskList.getCurrentList().getTasks().size(); i++) {
+		    
+		    //checks for completion and removes "[]" or "[x]"
+		    String taskInfo = taskList.getCurrentList().getTasks().get(i).toString();
+		    if (taskInfo.indexOf("x") == 1) {
+			taskInfo = taskInfo.substring(4);
+		    }
+		    else {
+			taskInfo = taskInfo.substring(3);
+		    }
+		    
+		    JCheckBox checkTemp = new JCheckBox();
+		    JButton buttonTemp = new JButton("Delete");
+		    JButton editTemp = new JButton("Edit");
+		    
+		    buttonTemp.addActionListener(new DeleteListener(taskList.getCurrentList().getTasks().get(i)));
+		    editTemp.addActionListener(new EditListener(taskList.getCurrentList().getTasks().get(i)));
+		    
+		    
+		    taskList.getCurrentList().getTasks().get(i).setEdit(editTemp);
+		    taskList.getCurrentList().getTasks().get(i).setCheck(checkTemp);
+		    taskList.getCurrentList().getTasks().get(i).setDelete(buttonTemp);
 		}
-		else {
-		    taskInfo = taskInfo.substring(3);
-		}
-		
-		JCheckBox checkTemp = new JCheckBox();
-		JButton buttonTemp = new JButton("Delete");
-		JButton editTemp = new JButton("Edit");
-		
-		buttonTemp.addActionListener(new DeleteListener(taskList.getCurrentList().getTasks().get(i)));
-		editTemp.addActionListener(new EditListener(taskList.getCurrentList().getTasks().get(i)));
-		
-		
-		taskList.getCurrentList().getTasks().get(i).setEdit(editTemp);
-		taskList.getCurrentList().getTasks().get(i).setCheck(checkTemp);
-		taskList.getCurrentList().getTasks().get(i).setDelete(buttonTemp);
+		this.displayTasks();
 	    }
 	
 	//displays the taskPanel components
-	    this.displayTasks();
 	}
 
 	JButton sortListNameButton = new JButton("SORT BY LIST NAME");
@@ -433,11 +435,12 @@ public class Todo implements Serializable {
 	    // Then go through the tasks in that List and delete all the tasks
 	    int j = taskList.getLists().indexOf(this.myList);
 	    for(int i = 0; i < taskList.getLists().get(j).getTasks().size(); i++) {
-		taskList.getLists().get(j).removeTask(taskList.getLists().get(j).getTasks().get(i));
+		taskList.getLists().get(j).getTasks().remove(taskList.getLists().get(j).getTasks().get(i));
 	    }
 
 	    // If the List being deleted is the currently selected list
 	    // Need to set currentList to something else
+	    
 	    if(current) {
 		if(taskList.getLists().size() == 1) {
 		    taskList.setCurrentList(null);
@@ -458,12 +461,12 @@ public class Todo implements Serializable {
 	    
 	    leftPanel.removeAll();
 	    leftPanel.repaint();
-	    displayLists();
 	    mainPanel.removeAll();
 	    mainPanel.repaint();
 
-	    // If new size is 0, don't call displayTasks(), because currentList is null
+	    // If new size is 0, don't call displayLists() or displayTasks(), because currentList is null
 	    if(!taskList.getLists().isEmpty()) {
+		displayLists();
 		if(hidden == true) {
 		    displayComTasks();
 		} else {
@@ -614,6 +617,10 @@ public class Todo implements Serializable {
     }
 
     public void displayLists() {
+	if(taskList.getCurrentList() == null) {
+	    taskList.setCurrentList(taskList.getLists().get(0));
+	}
+
 	if(listSorted == true) {
 	    for(int i = 0; i < taskList.getSortedLists().size(); i++) {
 		JButton listDeleteTemp = new JButton("X");
@@ -693,7 +700,7 @@ public class Todo implements Serializable {
 		mainPanel.add(taskList.getCurrentList().getTasks().get(i).getEdit());
 		mainPanel.add(taskList.getCurrentList().getTasks().get(i).getDelete());
 	    }
-	mainPanel.validate();
+	    //mainPanel.validate();
 	}
     }
 
