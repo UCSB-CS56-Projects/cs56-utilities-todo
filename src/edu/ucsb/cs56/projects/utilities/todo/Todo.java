@@ -135,7 +135,7 @@ public class Todo implements Serializable {
 		System.err.println("Caught ClassNotFoundException: " + e.getMessage());
 	    }
 
-	// Add code for List compoenents (need to be added before tasks)'
+	// Add code for List components (need to be added before tasks)'
 	if(!taskList.getLists().isEmpty()) {
 	    for(int i=0; i < taskList.getLists().size(); i++) {
 		String listInfo = taskList.getLists().get(i).toString();
@@ -433,21 +433,28 @@ public class Todo implements Serializable {
 	    // Then go through the tasks in that List and delete all the tasks
 	    int j = taskList.getLists().indexOf(this.myList);
 	    for(int i = 0; i < taskList.getLists().get(j).getTasks().size(); i++) {
-		taskList.getLists().get(j).getTasks().remove(taskList.getLists().get(j).getTasks().get(i));
-		//taskList.getLists().get(j).getSortedTasks().remove(taskList.getLists().get(j).getSortedTasks().get(i));
+		taskList.getLists().get(j).removeTask(taskList.getLists().get(j).getTasks().get(i));
 	    }
 
-	    taskList.getLists().remove(this.myList);
-
-	    // If list being deleted was the currentList and new size isn't 0
-	    // Make the first item in the list the currentList
-	    if(!taskList.getLists().isEmpty()) {
-		if(current) {
-		    taskList.setCurrentList(taskList.getLists().get(0));
+	    // If the List being deleted is the currently selected list
+	    // Need to set currentList to something else
+	    if(current) {
+		if(taskList.getLists().size() == 1) {
+		    taskList.setCurrentList(null);
+		    taskList.removeList(this.myList);
+		} else {
+		    taskList.setCurrentList(null);
+		    taskList.getLists().remove(this.myList);
+		    taskList.removeList(this.myList);
+		    
 		}
 	    } else {
-		taskList.setCurrentList(null);
+		taskList.removeList(this.myList);
 	    }
+
+	    // Update sortedLists() after deleting the List
+	    taskList.getSortedLists().clear();
+	    taskList.updateSortedLists(taskList.getLists(),taskList.getSortedLists());
 	    
 	    leftPanel.removeAll();
 	    leftPanel.repaint();
@@ -487,7 +494,7 @@ public class Todo implements Serializable {
 
     public class AddListListener implements ActionListener {
 	public void actionPerformed(ActionEvent ev) {
-
+	    listSorted = false;
 	    taskList.addList(taskList.makeList(addListField.getText(),
 							  new ArrayList<Task>(),
 							  new ArrayList<Task>()));
@@ -514,8 +521,6 @@ public class Todo implements Serializable {
 	    leftPanel.removeAll();
 	    leftPanel.repaint();
 	    displayLists();
-	    taskList.printListNames();
-	    System.out.println(taskList.getCurrentList().getListName());
 	}
     }
 	    
@@ -650,6 +655,7 @@ public class Todo implements Serializable {
 		leftPanel.add(taskList.getLists().get(i).getDelete());
 	    }
 	}
+	leftPanel.validate();
     }
 
     public void displayTasks() {
@@ -777,6 +783,7 @@ public class Todo implements Serializable {
 		}
 	    }
 	}
+	leftPanel.validate();
     }
 
     
