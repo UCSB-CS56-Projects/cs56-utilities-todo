@@ -700,7 +700,7 @@ public class Todo implements Serializable {
 		mainPanel.add(taskList.getCurrentList().getTasks().get(i).getEdit());
 		mainPanel.add(taskList.getCurrentList().getTasks().get(i).getDelete());
 	    }
-	    //mainPanel.validate();
+	    mainPanel.validate();
 	}
     }
 
