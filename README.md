@@ -57,10 +57,10 @@ Task: This contains the code that defines a single Task.
 List: This contains the code that defines a single List.
       -> A List is just an ArrayList that can hold Tasks.
 
-TodoList: This class contains conde that defines all current Lists.
+TodoList: This class contains code that defines all current Lists.
 	  -> A TodoList contains two ArrayLists (tasks and sortedTasks) that hold Tasks.
 
-Todo: This class initializes a TodoList and contais all the GUI code for the Todo List.
+Todo: This class initializes a TodoList and contains all the GUI code for the Todo List.
       -> You may find most of your bugs to stem from issues in this class.
 
 - In these classes, you will find some miscellaneous code for implementing subTasks and parentTasks, which is no longer needed.
