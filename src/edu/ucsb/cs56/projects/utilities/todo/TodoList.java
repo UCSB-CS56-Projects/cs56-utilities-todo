@@ -88,7 +88,7 @@ public class TodoList implements Serializable {
 
     /**
        Setter method for currentList
-       @param List to be made the currently selected list
+       @param list List to be made the currently selected list
     */
     public void setCurrentList(List list)
     {
