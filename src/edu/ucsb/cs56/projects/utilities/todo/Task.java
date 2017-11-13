@@ -243,4 +243,12 @@ public class Task implements Serializable {
     public JButton getEdit(){return this.editButton;}
     public void setUserInput(JTextField userInput){this.userInput = userInput;}
     public JTextField getUserInput(){return this.userInput;}
+    
+    public boolean equals(Task a) {
+    	return (this.taskName.equals(a.taskName) &&
+    			this.dueDate.equals(a.dueDate) &&
+    			this.priority == a.priority &&
+    			this.color.equals(a.color) &&
+    			this.parentTask.equals(a.parentTask));
+    }
 }
