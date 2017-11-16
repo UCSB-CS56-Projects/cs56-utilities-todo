@@ -5,12 +5,13 @@ import edu.ucsb.cs56.projects.utilities.todo.TodoList;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
-import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.GregorianCalendar;
 import java.util.Scanner;
 import java.io.*;
 import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
+
 import java.awt.*;
 import java.util.*;
 import java.awt.event.*;
@@ -45,20 +46,45 @@ public class Todo implements Serializable {
     private SpinnerNumberModel red;
     private SpinnerNumberModel green;
     private SpinnerNumberModel blue;
-
+    private String defaultSavePath = "savedLists/todo.ser";
+    
+    // All possible operations for undo function
+    enum Operation {
+    	ADDLIST, ADDTASK, EDITLIST, EDITTASK, DELETELIST, DELETETASK;
+    }
+    
+    // For undo function
+    // ArrayList used to store operations
+    private ArrayList<Operation> operation = new ArrayList<Operation>();
+    // Associated arguments with that operation
+    private ArrayList<Object> argument = new ArrayList<Object>();
+    
     /**
        The main method
     */
     public static void main(String[] args)
     {
-      	boolean end = true;
-      	TodoList taskList = new TodoList();
-       	Scanner scanner = new Scanner(System.in);  
-       	Todo todo = new Todo();
-	todo.go();
+    	boolean end = true;
+    	TodoList taskList = new TodoList();
+      	Scanner scanner = new Scanner(System.in);  
+      	Todo todo = new Todo();
+       	todo.go();
 	
     } //main method
+    
+    /**
+       Constructor
+     */
+    public Todo() {}
 
+    /**
+       Constructor
+       @param Default file path of the savedata
+    */
+    public Todo(String filePath) {
+    	this.defaultSavePath = filePath;
+    }
+    
     public void go() {
 	//build gui
 	frame = new JFrame("Todo List");
@@ -117,12 +143,14 @@ public class Todo implements Serializable {
 	
 	//default operation is for serialized list to be loaded
 	try{
-	    File file = new File("savedLists/todo.ser");
+	    File file = new File(defaultSavePath);
 	    if (!file.exists() || file.length() == 0) ;
 	    else {
 		ObjectInputStream iStream = 
 		    new ObjectInputStream(new FileInputStream(file));
 		taskList = (TodoList) iStream.readObject();
+		
+		iStream.close();
 	    }
 	}
 	catch(IOException e){
@@ -191,19 +219,21 @@ public class Todo implements Serializable {
 
 	JButton sortListNameButton = new JButton("SORT BY LIST NAME");
 	JButton sortPriorityButton = new JButton("SORT BY PRIORITY");
-       	JButton sortNameButton = new JButton("SORT BY NAME");
-       	JButton sortCompletionButton = new JButton("SORT BY COMPLETION");
-       	JButton sortDateButton = new JButton("SORT BY DATE");
+	JButton sortNameButton = new JButton("SORT BY NAME");
+	JButton sortCompletionButton = new JButton("SORT BY COMPLETION");
+	JButton sortDateButton = new JButton("SORT BY DATE");
 	JButton toggleCompletedButton = new JButton("SHOW/HIDE COMPLETED");
 	JButton deleteCompletedButton = new JButton("DELETE COMPLETED");
+	JButton undoButton = new JButton("UNDO(Not yet implemented)");
 
 	sortListNameButton.addActionListener(new sortListNameListener());
 	sortPriorityButton.addActionListener(new sortPriorityListener());
-       	sortNameButton.addActionListener(new sortNameListener());
-       	sortCompletionButton.addActionListener(new sortCompletionListener());
-       	sortDateButton.addActionListener(new sortDateListener());
+	sortNameButton.addActionListener(new sortNameListener());
+	sortCompletionButton.addActionListener(new sortCompletionListener());
+	sortDateButton.addActionListener(new sortDateListener());
 	toggleCompletedButton.addActionListener(new toggleCompletedListener());
 	deleteCompletedButton.addActionListener(new deleteCompletedListener());
+	undoButton.addActionListener(new undoListener());
 	
 	Box cbb = Box.createHorizontalBox();
 	one = new JCheckBox("!");
@@ -268,12 +298,14 @@ public class Todo implements Serializable {
 
 	sortPanel.add(sortListNameButton);
 	sortPanel.add(sortPriorityButton);
-        sortPanel.add(sortNameButton);
-        sortPanel.add(sortDateButton);
+	sortPanel.add(sortNameButton);
+	sortPanel.add(sortDateButton);
 	sortPanel.add(sortCompletionButton);
 	comPanel.add(toggleCompletedButton);
-        comPanel.add(deleteCompletedButton);
-
+	comPanel.add(deleteCompletedButton);
+	// Undo button
+	comPanel.add(undoButton);
+	
 	midPanel.add(sortPanel);
 	midPanel.add(comPanel);
 
@@ -284,7 +316,7 @@ public class Todo implements Serializable {
 	addTaskPanel.add(addField);
 	addTaskPanel.add(cbb);
 	addTaskPanel.add(colorBox);
-        addTaskPanel.add(addButton);
+	addTaskPanel.add(addButton);
 	addTaskPanel.add(formatLabel);
 	addButton.addActionListener(new AddListener());
 
@@ -300,18 +332,50 @@ public class Todo implements Serializable {
     //load from file
     public class LoadListener implements ActionListener {
 	public void actionPerformed(ActionEvent ev) {
-	    try {
-		JFileChooser fileOpen = new JFileChooser();
-		int retrieval = fileOpen.showOpenDialog(null);
-		if (retrieval == JFileChooser.APPROVE_OPTION) {
-		    taskList = taskList.getCurrentList().readFile(fileOpen.getSelectedFile());
-		    mainPanel.removeAll();
-		    mainPanel.repaint();
-		    displayTasks();  
+		JFileChooser fc = new JFileChooser();
+		fc.setCurrentDirectory(null);
+		fc.setDialogTitle("Please choose the path and name of your savedata");
+		fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
+		fc.setFileFilter(new FileNameExtensionFilter("*.ser", "ser"));
+		if (fc.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
+			File saveFile = new File(fc.getSelectedFile().getAbsolutePath());
+			// Open a new window with loaded file and close the previous one
+			Todo temp = new Todo(saveFile.getAbsolutePath());
+			frame.setVisible(false);
+			frame.dispose();
+			temp.go();
+				/*
+				ObjectInputStream iStream = 
+						new ObjectInputStream(new FileInputStream(saveFile.getAbsolutePath()));
+				
+				taskList.clear();
+				taskList = (TodoList) iStream.readObject();
+				
+				leftPanel.removeAll();
+				leftPanel.repaint();
+				mainPanel.removeAll();
+			    mainPanel.repaint();
+			    displayLists();
+			    displayTasks();
+			    
+			    iStream.close();
+			    */
+			
+			/*
+			catch(IOException e) {
+				if (e.getMessage().equals(e.getMessage()));
+				else
+				    System.err.println("Caught IOException: " + e.getMessage());
+			}
+			catch(ClassNotFoundException e){
+				System.err.println("Caught ClassNotFoundException: " + e.getMessage());
+			}
+			*/
+			}
+		else {
+			System.err.println("Load unsuccessful");
 		}
-	    } catch (Exception ex) {
-		ex.printStackTrace();
-	    }
+
 	}
     }
 
@@ -606,13 +670,38 @@ public class Todo implements Serializable {
 
     public class SaveListener implements ActionListener {
 	public void actionPerformed(ActionEvent ev) {
-	    JFileChooser fileSave = new JFileChooser();
+		JFileChooser fc = new JFileChooser();
+		fc.setCurrentDirectory(null);
+		fc.setDialogTitle("Please choose the path and name of your savedata");
+		fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
+		fc.setFileFilter(new FileNameExtensionFilter("*.ser", "ser"));
+		if (fc.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
+			File file = fc.getSelectedFile();
+			File saveFile = new File(file + ".ser");
+			//System.out.println(saveFile.getAbsolutePath());
+			try {
+				ObjectOutputStream oStream = new
+						ObjectOutputStream(new FileOutputStream(saveFile.getAbsolutePath()));
+				oStream.writeObject(taskList);
+				oStream.close();
+			}
+			catch(IOException ex) {
+				System.err.println("Caught IOException: " + ex.getMessage());
+			}
+		}
+		else {
+			System.err.println("Save unsuccessful");
+		}
+	    
+	    
+	    /*
 	    File f = new File("/savedLists");
 	    fileSave.setCurrentDirectory(f);
 	    int retrieval = fileSave.showSaveDialog(null);
 	    if (retrieval == JFileChooser.APPROVE_OPTION) {
 		taskList.getCurrentList().printTasksToFile(taskList.getCurrentList().getTasks(), 0, fileSave.getSelectedFile());
-	    }	   
+	    }
+		*/
 	}
     }
 
@@ -1007,6 +1096,12 @@ public class Todo implements Serializable {
 		}
 	    }
 	}
+    }
+    public class undoListener implements ActionListener {
+		public void actionPerformed(ActionEvent ev) {
+			// TODO Auto-generated method stub
+			
+		}
     }
 }
 	

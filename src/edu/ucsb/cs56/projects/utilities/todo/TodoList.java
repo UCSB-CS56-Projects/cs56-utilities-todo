@@ -104,7 +104,13 @@ public class TodoList implements Serializable {
 	return this.listGroup;
     }
 	    
-
+    /**
+       Remove all element of the TodoList
+    */
+    public void clear() {
+    	this.lists.clear();
+    	this.sortedLists.clear();
+    }
     /**
        Method that instigates dialog asking for input of a List
        Then creates a new List, and puts that in the ArrayList
@@ -161,7 +167,7 @@ public class TodoList implements Serializable {
        The TodoList has a list of all Lists, but is only updated when the user
        wants to sort by name. The list of Lists is first emptied and refilled
        with this function.
-       This method does not atually sort the list of Lists
+       This method does not actually sort the list of Lists
        @param lists the unsorted ArrayList of Lists
        @param sortedLists the ArrayList that will be populated with the unsorted ArrayList of Lists
     */
@@ -175,7 +181,7 @@ public class TodoList implements Serializable {
     }
 
     /**
-       A new Comparator tha allows to Lists to be compared by list name
+       A new Comparator that allows to Lists to be compared by list name
     */
     static Comparator<List> compareByListName()
     {
