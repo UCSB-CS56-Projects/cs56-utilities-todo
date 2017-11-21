@@ -64,6 +64,15 @@
    <mkdir dir= "savedLists" /> 
    <java classname="${projectPackage}.Todo" classpath="build" fork="true"/> 
   </target>
-
+  
+  <!-- Create a jar file for Todo -->
+  <target name="jar" depends="compile" description="create a jar file">
+    <jar destfile="./ToDo.jar" basedir="build/edu/ucsb/cs56/projects/utilities/todo/" includes="**/*.class">
+	<manifest>
+	  <attribute name="Main-Class" value="${main-class}"/>
+	</manifest>
+    </jar>
+  </target>
+  
 
 </project>
