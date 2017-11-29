@@ -67,9 +67,10 @@
   
   <!-- Create a jar file for Todo -->
   <target name="jar" depends="compile" description="create a jar file">
-    <jar destfile="./ToDo.jar" basedir="build/edu/ucsb/cs56/projects/utilities/todo/" includes="**/*.class">
+    <mkdir dir="cs56-utilities-todo/jar"/>
+    <jar destfile="cs56-utilities-todo/jar/ToDo.jar" basedir="src/edu/ucsb/cs56/projects/utilities/todo/">
 	<manifest>
-	  <attribute name="Main-Class" value="Todo"/>
+	  <attribute name="Main-Class" value="Rational"/>
 	</manifest>
     </jar>
   </target>

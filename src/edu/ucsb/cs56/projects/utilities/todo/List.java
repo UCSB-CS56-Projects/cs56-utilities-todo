@@ -183,9 +183,9 @@ public class List implements Serializable {
 	    year = -1;
 	}
 	else {
-	    month = Integer.parseInt(dateTokens[0]) -1;                                                                                          
+	    month = Integer.parseInt(dateTokens[0]);                                                                                          
 	    day   = Integer.parseInt(dateTokens[1]);                                                                                                
-	    year  = Integer.parseInt(dateTokens[2]) + 2000;      
+	    year  = Integer.parseInt(dateTokens[2]);      
 	}
 	if (nameTokens.length == 1)
 	    taskName = taskName;
@@ -533,5 +533,30 @@ public class List implements Serializable {
     {
 	this.setLabel();
 	return this.label;
+    }
+    /**
+    	Return the tasks of a certain day in HTML format (if no task just show date)
+    	<html> Day   <br/>
+    		   Task1 <br/> 
+    		   Task2 <br/>
+    		   ...
+    	</html>
+    	@param day day of the month
+    	@param month the month of desired tasks (0 is Jan)
+    	@param year the year of desired tasks
+    */
+    public String getTaskOfACertainDay(int day, int month, int year) {
+    	String result = "<html>" + day + "<br/>";
+    	for (Task a : tasks) {
+    		if (a.getCalendarForm() != null &&
+    			a.getCalendarForm().get(Calendar.MONTH) == month &&
+    			a.getCalendarForm().get(Calendar.DATE) == day &&
+    			a.getCalendarForm().get(Calendar.YEAR) == year) {
+    			result += a.getName();
+    			result += "<br/>";
+    		}
+    	}
+    	result += "</html>";
+    	return result;
     }
 }
