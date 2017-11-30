@@ -4,76 +4,75 @@
        Note: for this lab, you should not need to edit this file -->
 
    <property name="projectPackage" value="edu.ucsb.cs56.projects.utilities.todo" />
-   <property environment="env"/> <!-- load the environment variables --> 
+   <property environment="env"/> <!-- load the environment variables -->
    <property name="webRoot" value="${env.HOME}/public_html/cs56" />
    <property name="webBaseURL" value="http://www.cs.ucsb.edu/~khalid/cs56" />
-   <property name="projectName" value="cs56-utilities-todo" /> 
-   <property name="javadocDest" value="${webRoot}/${projectName}/javadoc" /> 
-   <property name="javadocURL" value="${webBaseURL}/${projectName}/javadoc" /> 
+   <property name="projectName" value="cs56-utilities-todo" />
+   <property name="javadocDest" value="${webRoot}/${projectName}/javadoc" />
+   <property name="javadocURL" value="${webBaseURL}/${projectName}/javadoc" />
    <property name="javadocLink" value="http://java.sun.com/javase/7/docs/api/" />
    <path id="project.class.path">
          <pathelement location="build"/>
          <pathelement location="lib/junit-4.8.2.jar"/>
-   </path>   
+   </path>
 
   <target name="compile" description="compile my code">
     <mkdir dir="build" />
-    <javac srcdir="src" destdir="build" debug="true" debuglevel="lines,source" 
+    <javac srcdir="src" destdir="build" debug="true" debuglevel="lines,source"
      includeantruntime="false" >
       <classpath refid="project.class.path" />
     </javac>
   </target>
 
   <target name="clean" description="delete unnecessary files and directories">
-    <delete dir="build" quiet="true" />  
+    <delete dir="build" quiet="true" />
     <delete dir="javadoc" quiet="true" />
-  </target> 
+  </target>
 
   <target name="cleanSaved" description="delete any saved .ser files">
     <delete dir="savedLists" quiet="true" />
   </target>
 
- <target name="javadoc" depends="compile" description="publish javadoc"> 
-   <delete dir="javadoc" quiet="true" /> 
+ <target name="javadoc" depends="compile" description="publish javadoc">
+   <delete dir="javadoc" quiet="true" />
    <javadoc  destdir="javadoc" author="true" version="true" use="true" >
      <fileset dir="src" includes="**/*.java"/>
      <classpath refid="project.class.path" />
      <link href="${javadocLink}" /> <!-- for external links to std API classes -->
    </javadoc>
-   <!-- delete the old javadoc --> 
-   <delete quiet="true" dir="${javadocDest}" /> 
- 
+   <!-- delete the old javadoc -->
+   <delete quiet="true" dir="${javadocDest}" />
+
    <!-- copy everything you just made to the javadoc destination,
-  and then make it readable -->   
-   <copy todir="${javadocDest}" > 
-     <fileset dir="javadoc"/> 
-   </copy> 
+  and then make it readable -->
+   <copy todir="${javadocDest}" >
+     <fileset dir="javadoc"/>
+   </copy>
 
    <!-- Note: this only does the chmod command on the javadoc
   subdirectory and its contents.  You MIGHT have to MANUALLY do the
   chmod on the parent directories.  However, you should only need to do
-  that once. 
+  that once.
      -->
-   <chmod dir="${javadocDest}" perm="755"  type="dir" includes="**" /> 
-   <chmod dir="${javadocDest}" perm="755"  type="file" includes="**/*" /> 
+   <chmod dir="${javadocDest}" perm="755"  type="dir" includes="**" />
+   <chmod dir="${javadocDest}" perm="755"  type="file" includes="**/*" />
    <echo>Javadoc deployed to ${javadocURL}</echo>
- </target>        
+ </target>
 
   <!-- TODO: add attribute fork="true" for gui -->
   <target name="run" depends="compile" description="run the todo application">
-   <mkdir dir= "savedLists" /> 
-   <java classname="${projectPackage}.Todo" classpath="build" fork="true"/> 
+   <mkdir dir= "savedLists" />
+   <java classname="${projectPackage}.Todo" classpath="build" fork="true"/>
   </target>
-  
+
   <!-- Create a jar file for Todo -->
   <target name="jar" depends="compile" description="create a jar file">
-    <mkdir dir="cs56-utilities-todo/jar"/>
-    <jar destfile="cs56-utilities-todo/jar/ToDo.jar" basedir="src/edu/ucsb/cs56/projects/utilities/todo/">
+    <jar destfile="./ToDo.jar" basedir="build/edu/ucsb/cs56/projects/utilities/todo/" includes="**/*.class">
 	<manifest>
-	  <attribute name="Main-Class" value="Rational"/>
+	  <attribute name="Main-Class" value="${main-class}"/>
 	</manifest>
     </jar>
   </target>
-  
+
 
 </project>
