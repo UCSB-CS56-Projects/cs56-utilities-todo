@@ -57,11 +57,11 @@ public class Task implements Serializable {
 	}    
 	//if no time
 	else if (hour == -1)
-	    this.dueDate = new GregorianCalendar(year, month, day);
+	    this.dueDate = new GregorianCalendar(year, month - 1, day);
 	
 	//default
 	else
-	    {this.dueDate = new GregorianCalendar(year, month, day, hour, min);}
+	    {this.dueDate = new GregorianCalendar(year, month - 1, day, hour, min);}
 	this.priority = priorityInteger;
 	this.color = newColor;
 	this.completed = false;
@@ -91,6 +91,10 @@ public class Task implements Serializable {
 	    return "";
 	}
 	else {
+
+	    //String result = dueDate.get(Calendar.MONTH) + "/" + dueDate.get(Calendar.DATE) + "/" + dueDate.get(Calendar.YEAR)
+	    //				+ " " + dueDate.get(Calendar.HOUR) + ":" + dueDate.get(Calendar.MINUTE);
+	    //return result;
 	    SimpleDateFormat date_format = new SimpleDateFormat("MM/dd/yyyy HH:mm");
 	    return date_format.format(this.dueDate.getTime());
 	}
@@ -243,4 +247,12 @@ public class Task implements Serializable {
     public JButton getEdit(){return this.editButton;}
     public void setUserInput(JTextField userInput){this.userInput = userInput;}
     public JTextField getUserInput(){return this.userInput;}
+    
+    public boolean equals(Task a) {
+    	return (this.taskName.equals(a.taskName) &&
+    			this.dueDate.equals(a.dueDate) &&
+    			this.priority == a.priority &&
+    			this.color.equals(a.color) &&
+    			this.parentTask.equals(a.parentTask));
+    }
 }
